@@ -7,12 +7,55 @@ This lightweight rate limiter acts as a reverse proxy in front of your main appl
 The rate limiter is implemented using Lua scripting within NGINX, leveraging the `lua-resty-global-throttle` and `lua-resty-ipmatcher` libraries. Rate limit configurations are defined in a YAML file, allowing flexible and dynamic rule enforcement.
 
 ## Architecture
-```
-+-------------------+       +-------------------+       +-------------------+
-|                   |       |                   |       |                   |
-|   Client Request  +------>+  NGINX Proxy      +------>+  Main Application |
-|                   |       |  (Rate Limiter)   |       |                   |
-+-------------------+       +-------------------+       +-------------------+
+
+```mermaid
+graph LR
+   subgraph Client
+      A[Client]
+   end
+
+   subgraph Infrastructure
+      B[Nginx Proxy] -- Rate Limit Check --> C{Mcrouter}
+      C -- Get/Set --> D1[Memcached 1]
+      C -- Get/Set --> D2[Memcached 2]
+      C -- Get/Set --> D3[Memcached 3]
+
+      classDef memcached fill:#ddf,stroke:#333;
+      class D1,D2,D3 memcached
+
+      style B fill:#f9f,stroke:#333,stroke-width:2px
+      style C fill:#ccf,stroke:#333,stroke-width:2px
+      style B fill:#f9f,stroke:#333,stroke-width:2px
+      classDef rate_limiting fill:#ffc,stroke:#333;
+      class C rate_limiting
+   end
+
+   subgraph Application
+      E[Main Application]
+      style E fill:#eef,stroke:#333,stroke-width:2px
+   end
+
+   B -- Forward if allowed --> E
+   E -- Response --> B
+   B -- Response --> A
+   A -- Request --> B
+
+   classDef external fill:#eee,stroke:#333
+   class A external
+
+   classDef container fill:#ccf,stroke:#333
+   class E container
+
+   classDef proxy fill:#f9f,stroke:#333
+   class B proxy
+
+   linkStyle 0,4 stroke:#0aa,stroke-width:2px;
+   linkStyle 5,6 stroke:#aa0,stroke-width:2px;
+   linkStyle 1,2,3 stroke:#888,stroke-width:1.5px,stroke-dasharray: 5 5;
+   linkStyle 6 stroke:#080,stroke-width:2px;
+   
+   classDef cache fill:#ddf,stroke:#333
+   class D1,D2,D3 cache
 ```
 
 ## Interaction Flow
