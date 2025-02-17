@@ -1,7 +1,0 @@
-mcrouter:
-  controller: statefulset
-  memcached:
-    enabled: true
-    replicaCount: 3
-  statefulset:
-    replicas: 2

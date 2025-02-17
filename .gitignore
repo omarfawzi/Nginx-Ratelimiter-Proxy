@@ -1,4 +1,2 @@
 .idea
-kubernetes/charts
-kubernetes/Chart.lock
 ratelimits.yaml
