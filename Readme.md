@@ -1,4 +1,4 @@
-# NGINX Rate Limiter Sidecar
+# NGINX Rate Limiter Proxy
 
 ## Overview
 
