@@ -17,7 +17,11 @@ local function apply_rate_limiting(path, key, rule, cache, throttle_config)
     local my_throttle = global_throttle.new('local', rule.limit, rule.window, throttle_config)
 
     local _, desired_delay
-    _, desired_delay = my_throttle:process(cache_key)
+    _, desired_delay, err = my_throttle:process(cache_key)
+
+    if err then
+        ngx.log(ngx.ERR, "Error while throttling: ", err)
+    end
 
     if desired_delay and desired_delay > CACHE_THRESHOLD then
         cache:safe_add(cache_key, true, desired_delay)
