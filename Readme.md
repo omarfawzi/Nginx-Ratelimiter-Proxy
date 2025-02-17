@@ -2,15 +2,15 @@
 
 ## Overview
 
-This lightweight rate limiter is designed to be deployed alongside your main application pods, intercepting incoming traffic and proxying it to the main application only if the request rate is within the defined limits. This helps in protecting your application from being overwhelmed by too many requests.
+This lightweight rate limiter acts as a reverse proxy in front of your main application, controlling incoming traffic and enforcing rate limits before requests reach your backend. It helps protect your application from excessive traffic and potential abuse.
 
-The rate limiter is implemented using Lua scripting within NGINX, leveraging the `lua-resty-global-throttle` and `lua-resty-ipmatcher` libraries. The configuration for rate limits is defined in a YAML file, which allows for flexible and dynamic rate limiting rules.
+The rate limiter is implemented using Lua scripting within NGINX, leveraging the `lua-resty-global-throttle` and `lua-resty-ipmatcher` libraries. Rate limit configurations are defined in a YAML file, allowing flexible and dynamic rule enforcement.
 
 ## Architecture
 ```
 +-------------------+       +-------------------+       +-------------------+
 |                   |       |                   |       |                   |
-|   Client Request  +------>+  NGINX Sidecar    +------>+  Main Application |
+|   Client Request  +------>+  NGINX Proxy      +------>+  Main Application |
 |                   |       |  (Rate Limiter)   |       |                   |
 +-------------------+       +-------------------+       +-------------------+
 ```
@@ -18,14 +18,14 @@ The rate limiter is implemented using Lua scripting within NGINX, leveraging the
 ## Interaction Flow
 
 1. **Client Request**: The client sends a request to the application.
-2. **NGINX Sidecar**: The request is intercepted by the NGINX sidecar container.
-3. **Rate Limiting**: The sidecar checks the request against the rate limiting rules defined in the YAML file.
+2. **NGINX Sidecar**: The request is intercepted by the NGINX proxy.
+3. **Rate Limiting**: The proxy checks the request against the rate limiting rules defined in the YAML file.
 4. **Decision Making**:
-   - Request ip/user will be first validated against `ignoredSegments` if they match ratelimiting will be skipped.
-   - If the request is within the rate limit, it is proxied to the main application.
-   - If the request exceeds the rate limit, a `429 Too Many Requests` response is returned to the client.
-   - If lua script triggered an exception, request will still be proxied to main application.
-   - Ips takes priority over users, also explicit ips takes priority over 0.0.0.0/0 CIDR range.
+   - Request IP/user is first validated against ignoredSegments. If matched, rate limiting is skipped. 
+   - If the request is within the rate limit, it is proxied to the main application. 
+   - If the request exceeds the rate limit, a 429 Too Many Requests response is returned to the client. 
+   - If the Lua script triggers an exception, the request is still proxied to the main application. 
+   - Explicit IPs take priority over generic CIDR ranges (e.g., 0.0.0.0/0).
 5. **Main Application**: The request is processed by the main application if it passes the rate limiting check.
 
 ## Configuration

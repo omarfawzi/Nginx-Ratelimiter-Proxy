@@ -30,7 +30,7 @@ local function apply_rate_limiting(path, key, rule)
         return true
     end
 
-    local my_throttle, err = global_throttle.new('current', rule.limit, rule.window, memcached_config)
+    local my_throttle, err = global_throttle.new('local', rule.limit, rule.window, memcached_config)
     if err then
         ngx.log(ngx.ERR, 'failed to initialize resty_global_throttle: ', err)
         return false
