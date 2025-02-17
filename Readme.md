@@ -91,7 +91,7 @@ ratelimits:
   /path2:
     user3: { limit: 30, window: 60 }
 ```
-
+- **ignoredSegments**: Either ip/user where ratelimiting should be ignored for.
 - **path**: The URI path to which the rate limit applies.
 - **user/IP**: The user or IP address to which the rate limit applies.
 - **limit**: The maximum number of requests allowed within the time window.
