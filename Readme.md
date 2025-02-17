@@ -4,7 +4,7 @@
 
 This lightweight rate limiter is designed to be deployed alongside your main application pods, intercepting incoming traffic and proxying it to the main application only if the request rate is within the defined limits. This helps in protecting your application from being overwhelmed by too many requests.
 
-The rate limiter is implemented using Lua scripting within NGINX, leveraging the lua-resty-global-throttle and lua-resty-ipmatcher libraries. The configuration for rate limits is defined in a YAML file, which allows for flexible and dynamic rate limiting rules.
+The rate limiter is implemented using Lua scripting within NGINX, leveraging the `lua-resty-global-throttle` and `lua-resty-ipmatcher` libraries. The configuration for rate limits is defined in a YAML file, which allows for flexible and dynamic rate limiting rules.
 
 ## Architecture
 ```
@@ -22,7 +22,7 @@ The rate limiter is implemented using Lua scripting within NGINX, leveraging the
 3. **Rate Limiting**: The sidecar checks the request against the rate limiting rules defined in the YAML file.
 4. **Decision Making**:
    - If the request is within the rate limit, it is proxied to the main application.
-   - If the request exceeds the rate limit, a **429 Too Many Requests** response is returned to the client.
+   - If the request exceeds the rate limit, a `429 Too Many Requests` response is returned to the client.
    - If lua script triggered an exception, request will still be proxied to main application.
    - Ips takes priority over users, also explicit ips takes priority over 0.0.0.0/0 CIDR range.
 5. **Main Application**: The request is processed by the main application if it passes the rate limiting check.
