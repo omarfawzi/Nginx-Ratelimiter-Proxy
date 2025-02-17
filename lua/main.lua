@@ -5,7 +5,7 @@ local status, err = pcall(function()
     rate_limit.throttle(ngx, _G.ratelimits, _G.ignored_ips, _G.ignored_users, ngx.shared.global_throttle_cache, {
         provider = 'memcached',
         host = os.getenv('MCROUTER_HOST'),
-        port = os.getenv('MCROUTER_PORT'),
+        port = os.getenv('MCROUTER_PORT') or 5000,
         connect_timeout = 50,
         max_idle_timeout = 50,
         pool_size = 50
