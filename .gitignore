@@ -1,2 +1,3 @@
 .idea
-.kubernetes/charts
+kubernetes/charts
+kubernetes/Chart.lock
