@@ -1,0 +1,6 @@
+dependencies:
+- name: mcrouter
+  repository: https://evryfs.github.io/helm-charts/
+  version: 0.4.0
+digest: sha256:af2b1df5db381aa4b7179e45ac4c8b35e9e69073f9f3efa8e5297e9fa35dc4a6
+generated: "2025-02-17T09:14:05.83179+01:00"

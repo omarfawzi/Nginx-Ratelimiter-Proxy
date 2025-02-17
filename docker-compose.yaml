@@ -1,0 +1,20 @@
+services:
+  web:
+    environment:
+      - UPSTREAM_HOST=127.0.0.1
+      - UPSTREAM_PORT=9000
+      - MCROUTER_HOST=172.20.0.2
+      - MCROUTER_PORT=11211
+    build: .
+    ports:
+      - "8080:49152"
+    volumes:
+      - ./lua/rate_limit.lua:/usr/local/openresty/nginx/lua/rate_limit.lua
+      - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./ratelimits.yaml:/usr/local/openresty/nginx/lua/ratelimits.yaml
+    depends_on:
+      - memcached
+  memcached:
+    image: memcached:alpine
+    ports:
+      - "11211:11211"

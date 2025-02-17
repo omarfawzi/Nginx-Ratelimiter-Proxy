@@ -1,0 +1,11 @@
+---
+apiVersion: v2
+name: nginx-rate-limiter
+description: A Helm chart for nginx rate limiter
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies:
+  - name: mcrouter
+    version: ^0.4.0
+    repository: https://evryfs.github.io/helm-charts/
