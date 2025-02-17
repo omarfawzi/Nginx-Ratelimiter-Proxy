@@ -42,7 +42,7 @@ local function is_rate_limited(path, key, rules, cache, throttle_config)
     end
 
     if rules[ALL_IPS_RANGE] then
-        return apply_rate_limiting(path, ALL_IPS_RANGE, rules[ALL_IPS_RANGE], cache, throttle_config)
+        return apply_rate_limiting(path, key, rules[ALL_IPS_RANGE], cache, throttle_config)
     end
 
     return false
