@@ -9,9 +9,9 @@ services:
     ports:
       - "8080:49152"
     volumes:
-      - ./lua/rate_limit.lua:/usr/local/openresty/nginx/lua/rate_limit.lua
-      - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
-      - ./ratelimits.yaml:/usr/local/openresty/nginx/lua/ratelimits.yaml
+      - ${PWD}/lua/rate_limit.lua:/usr/local/openresty/nginx/lua/rate_limit.lua
+      - ${PWD}/nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ${PWD}/ratelimits.yaml:/usr/local/openresty/nginx/lua/ratelimits.yaml
     depends_on:
       - memcached
   memcached:

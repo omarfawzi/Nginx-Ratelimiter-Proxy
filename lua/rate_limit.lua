@@ -75,10 +75,14 @@ local function is_rate_limited(path, key, is_ip)
     local rules = ratelimits[path]
     if not rules then return false end
 
+    if rules[key] then
+        return apply_rate_limiting(path, key, rules[key])
+    end
+
     local ip_matcher = is_ip and resty_ipmatcher.new({ key }) or nil
 
     for rule_key, rule in pairs(rules) do
-        if rule_key ~= ALL_IPS_RANGE and (rule_key == key or (ip_matcher and ip_matcher:match(rule_key))) then
+        if rule_key ~= ALL_IPS_RANGE and (ip_matcher and ip_matcher:match(rule_key)) then
             return apply_rate_limiting(path, rule_key, rule)
         end
     end
