@@ -61,15 +61,16 @@ graph TD
 ## Interaction Flow
 
 1. **Client Request**: The client sends a request to the application.
-2. **NGINX Sidecar**: The request is intercepted by the NGINX proxy.
+2. **NGINX Proxy**: The request is intercepted by the NGINX proxy.
 3. **Rate Limiting**: The proxy checks the request against the rate limiting rules defined in the YAML file.
-4. **Decision Making**:
-   - Request IP/user is first validated against ignoredSegments. If matched, rate limiting is skipped. 
-   - If the request is within the rate limit, it is proxied to the main application. 
-   - If the request exceeds the rate limit, a 429 Too Many Requests response is returned to the client. 
-   - If the Lua script triggers an exception, the request is still proxied to the main application. 
-   - Explicit IPs take priority over generic CIDR ranges (e.g., 0.0.0.0/0).
+4. **Decision-Making & Request Handling**:
+   - **Ignored Segments**: The request IP/user is first checked against the ignoredSegments configuration. If matched, rate limiting is bypassed, and the request is forwarded.
+   - **Rate Limit Exceeded**: If the request exceeds the defined rate limit, a 429 Too Many Requests response is immediately returned to the client.
+   - **Rate Limit Within Limits**: If the request is within the rate limit, it is proxied to the main application.
+   - **Lua Exception Handling**: In the event of an exception within the Lua rate limiting script, the request is still proxied to the main application (this should be carefully considered and potentially logged/monitored).
+   - **IP Precedence**: Explicit IP addresses in the configuration take priority over generic CIDR ranges (e.g., 0.0.0.0/0).
 5. **Main Application**: The request is processed by the main application if it passes the rate limiting check.
+6. **Response**: The main application's response travels back through the NGINX proxy to the client.
 
 ## Configuration
 
@@ -91,18 +92,19 @@ ratelimits:
   /path2:
     user3: { limit: 30, window: 60 }
 ```
-- **ignoredSegments**: Either ip/user where ratelimiting should be ignored for.
-- **path**: The URI path to which the rate limit applies.
-- **user/IP**: The user or IP address to which the rate limit applies.
-- **limit**: The maximum number of requests allowed within the time window.
-- **window**: The time window in seconds during which the limit applies.
+- `ignoredSegments`: Defines users and IPs for which rate limiting should be skipped. This is useful for administrative users or specific trusted IPs.
+- `ratelimits`: Contains the rate limit rules for different URI paths.
+- `path`: The URI path to which the rate limit applies.
+- `user/IP`: The user or IP address to which the rate limit applies.
+- `limit`: The maximum number of requests allowed within the time window.
+- `window`: The time window in seconds during which the limit applies.
 
 ### Environment Variables
 
 The following environment variables need to be set:
 
-- **UPSTREAM_HOST**: The hostname of the main application.
-- **UPSTREAM_PORT**: The port of the main application.
-- **MCROUTER_HOST**: The hostname of the McRouter server.
-- **MCROUTER_PORT**: The port of the McRouter server.
+- `UPSTREAM_HOST`: The hostname of the main application.
+- `UPSTREAM_PORT`: The port of the main application.
+- `MCROUTER_HOST`: The hostname of the McRouter server.
+- `MCROUTER_PORT`: The port of the McRouter server.
 
