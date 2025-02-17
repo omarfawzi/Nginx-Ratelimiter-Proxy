@@ -1,4 +1,4 @@
-ignoredCidrs:
+ignoredSegments:
   users:
     - admin
   ips:

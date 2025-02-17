@@ -21,6 +21,7 @@ The rate limiter is implemented using Lua scripting within NGINX, leveraging the
 2. **NGINX Sidecar**: The request is intercepted by the NGINX sidecar container.
 3. **Rate Limiting**: The sidecar checks the request against the rate limiting rules defined in the YAML file.
 4. **Decision Making**:
+   - Request ip/user will be first validated against `ignoredSegments` if they match ratelimiting will be skipped.
    - If the request is within the rate limit, it is proxied to the main application.
    - If the request exceeds the rate limit, a `429 Too Many Requests` response is returned to the client.
    - If lua script triggered an exception, request will still be proxied to main application.
@@ -34,6 +35,12 @@ The rate limiter is implemented using Lua scripting within NGINX, leveraging the
 Rate limit rules are defined in the ratelimits.yaml file. The structure of the YAML file is as follows:
 
 ```yaml
+ignoredSegments:
+   users:
+      - admin
+   ips:
+      - 127.0.0.1
+
 ratelimits:
   /path1:
     user2: { limit: 50, window: 60 }
