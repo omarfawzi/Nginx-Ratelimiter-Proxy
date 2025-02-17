@@ -46,7 +46,7 @@ graph TD
    class B proxy
 
    linkStyle 0,4 stroke:#0aa,stroke-width:2px;
-   linkStyle 5,6 stroke:#aa0,stroke-width:2px;
+   linkStyle 5,6 stroke:#080,stroke-width:2px;
    linkStyle 1,2,3 stroke:#888,stroke-width:1.5px,stroke-dasharray: 5 5;
    linkStyle 6 stroke:#080,stroke-width:2px;
    
