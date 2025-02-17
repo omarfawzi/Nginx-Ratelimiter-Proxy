@@ -83,13 +83,11 @@ local function is_rate_limited(path, key)
 end
 
 local function is_ignored(ip, user)
-    -- Check if the ip is ignored
     local ip_matcher = resty_ipmatcher.new(ignored_ips)
     if ip_matcher:match(ip) then
         return true
     end
 
-    -- Check if the user is ignored
     for _, ignored_user in ipairs(ignored_users) do
         if user == ignored_user then
             return true
