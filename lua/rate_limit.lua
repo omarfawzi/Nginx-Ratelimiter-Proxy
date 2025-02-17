@@ -8,6 +8,7 @@ local _M = {}
 local DECISION_CACHE = ngx.shared.global_throttle_cache
 local CACHE_THRESHOLD = 0.001
 local ALL_IPS_RANGE = '0.0.0.0/0'
+local GLOBAL_PATH = '/'
 
 local memcached_config = {
    provider = 'memcached',
@@ -19,6 +20,8 @@ local memcached_config = {
 }
 
 local ratelimits = _G.ratelimits or {}
+local ignored_users = _G.ignored_users or {}
+local ignored_ips = _G.ignored_ips or {}
 
 local function extract_remote_user_from_authorization_header(header)
   local pos = string.find(header, ":", 1, true)
@@ -33,6 +36,21 @@ local function get_remote_user()
     end
 
     return nil
+end
+
+local function is_valid_ip(ip)
+    return resty_ipmatcher.parse_ipv4(ip) or resty_ipmatcher.parse_ipv6(ip) or
+            resty_ipmatcher.new({ip}) or resty_ipmatcher.new({ip})
+end
+
+local function extract_ips(rate_limits)
+    local rate_limit_ips = {}
+    for key, value in pairs(rate_limits) do
+        if key ~= ALL_IPS_RANGE and is_valid_ip(key) then
+            rate_limit_ips[key] = value
+        end
+    end
+    return rate_limit_ips
 end
 
 local function apply_rate_limiting(path, key, rule)
@@ -71,19 +89,18 @@ local function apply_rate_limiting(path, key, rule)
     return false
 end
 
-local function is_rate_limited(path, key, is_ip)
-    local rules = ratelimits[path]
+local function is_rate_limited(path, key)
+    local rules = ratelimits[path] or ratelimits[GLOBAL_PATH]
     if not rules then return false end
 
     if rules[key] then
         return apply_rate_limiting(path, key, rules[key])
     end
 
-    local ip_matcher = is_ip and resty_ipmatcher.new({ key }) or nil
-
-    for rule_key, rule in pairs(rules) do
-        if rule_key ~= ALL_IPS_RANGE and (ip_matcher and ip_matcher:match(rule_key)) then
-            return apply_rate_limiting(path, rule_key, rule)
+    if is_valid_ip(key) then
+        local ip_matcher = resty_ipmatcher.new(extract_ips(rules))
+        if ip_matcher and ip_matcher:match(key) then
+            return apply_rate_limiting(path, key, rules[ip_matcher:match(key)])
         end
     end
 
@@ -94,10 +111,31 @@ local function is_rate_limited(path, key, is_ip)
     return false
 end
 
+local function is_ignored(ip, user)
+    -- Check if the ip is ignored
+    local ip_matcher = resty_ipmatcher.new(ignored_ips)
+    if ip_matcher:match(ip) then
+        return true
+    end
+
+    -- Check if the user is ignored
+    for _, ignored_user in ipairs(ignored_users) do
+        if user == ignored_user then
+            return true
+        end
+    end
+
+    return false
+end
+
 function _M.throttle()
     local remote_ip = ngx.var.remote_addr
     local username = get_remote_user()
     local request_path = ngx.var.uri
+
+    if is_ignored(remote_ip, username) then
+        return
+    end
 
     if (remote_ip and is_rate_limited(request_path, remote_ip)) or (username and is_rate_limited(request_path, username)) then
         return ngx_exit(ngx.HTTP_TOO_MANY_REQUESTS)

@@ -1,3 +1,9 @@
+ignoredCidrs:
+  users:
+    - admin
+  ips:
+    - 127.0.0.1
+
 ratelimits:
   /:
     172.20.0.1:
