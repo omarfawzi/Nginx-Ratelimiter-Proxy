@@ -9,11 +9,7 @@ The rate limiter is implemented using Lua scripting within NGINX, leveraging the
 ## Architecture
 
 ```mermaid
-graph LR
-   subgraph Client
-      A[Client]
-   end
-
+graph TD
    subgraph Infrastructure
       B[Nginx Proxy] -- Rate Limit Check --> C{Mcrouter}
       C -- Get/Set --> D1[Memcached 1]
@@ -56,6 +52,10 @@ graph LR
    
    classDef cache fill:#ddf,stroke:#333
    class D1,D2,D3 cache
+
+   subgraph Client
+      A[Client]
+   end
 ```
 
 ## Interaction Flow
