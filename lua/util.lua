@@ -1,10 +1,19 @@
 local _M = {}
 local resty_ipmatcher = require("resty.ipmatcher")
 local ALL_IPS_RANGE = '0.0.0.0/0'
+local GLOBAL_PATH = '/'
 
 local function extract_remote_user_from_authorization_header(header)
     local pos = string.find(header, ":", 1, true)
     return pos and string.sub(header, 1, pos - 1) or nil
+end
+
+function _M.find_path_rules(ngx, path, rules)
+    for pattern, pathRules in pairs(rules) do
+        if pattern ~= GLOBAL_PATH and ngx.re.match(path, pattern) then
+            return pathRules
+        end
+    end
 end
 
 function _M.get_remote_user(ngx)

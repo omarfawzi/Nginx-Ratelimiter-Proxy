@@ -6,7 +6,7 @@ local _M = {}
 
 local CACHE_THRESHOLD = 0.001
 local ALL_IPS_RANGE = '0.0.0.0/0'
-local GLOBAL_PATH = '/' 
+local GLOBAL_PATH = '/'
 
 local function apply_rate_limiting(path, key, rule, cache, throttle_config)
     local cache_key = path .. ":" .. key
@@ -36,22 +36,23 @@ local function apply_rate_limiting(path, key, rule, cache, throttle_config)
     return false
 end
 
-local function is_rate_limited(path, key, rules, cache, throttle_config)
-    if not rules then return false end
+local function is_rate_limited(ngx, path, key, rules, cache, throttle_config)
+    local path_rules = util.find_path_rules(ngx, path, rules)
+    if not path_rules then return false end
 
-    if rules[key] then
-        return apply_rate_limiting(path, key, rules[key], cache, throttle_config)
+    if path_rules[key] then
+        return apply_rate_limiting(path, key, path_rules[key], cache, throttle_config)
     end
 
     if util.is_valid_ip(key) then
-        local ip_matcher = resty_ipmatcher.new(util.extract_ips(rules))
+        local ip_matcher = resty_ipmatcher.new(util.extract_ips(path_rules))
         if ip_matcher and ip_matcher:match(key) then
-            return apply_rate_limiting(path, key, rules[ip_matcher:match(key)])
+            return apply_rate_limiting(path, key, path_rules[ip_matcher:match(key)])
         end
     end
 
-    if rules[ALL_IPS_RANGE] then
-        return apply_rate_limiting(path, key, rules[ALL_IPS_RANGE], cache, throttle_config)
+    if path_rules[ALL_IPS_RANGE] then
+        return apply_rate_limiting(path, key, path_rules[ALL_IPS_RANGE], cache, throttle_config)
     end
 
     return false
@@ -85,11 +86,11 @@ function _M.throttle(ngx, rules, ignored_ips, ignored_users, cache, throttle_con
         return
     end
 
-    if (remote_ip and is_rate_limited(request_path, remote_ip, rules[request_path] or rules[GLOBAL_PATH], cache, throttle_config)) then
+    if (remote_ip and is_rate_limited(ngx, request_path, remote_ip, rules, cache, throttle_config)) then
         return ngx.exit(ngx.HTTP_TOO_MANY_REQUESTS)
     end
 
-    if (username and is_rate_limited(request_path, username, rules[request_path] or rules[GLOBAL_PATH], cache, throttle_config)) then
+    if (username and is_rate_limited(ngx, request_path, username, rules, cache, throttle_config)) then
         return ngx.exit(ngx.HTTP_TOO_MANY_REQUESTS)
     end
 end

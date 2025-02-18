@@ -95,10 +95,13 @@ rules:
 ```
 - `ignoredSegments`: Defines users and IPs for which rate limiting should be skipped. This is useful for administrative users or specific trusted IPs.
 - `rules`: Contains the rate limit rules for different URI paths.
-- `path`: The URI path to which the rate limit applies.
+- `path`: The URI path to which the rate limit applies, to apply ratelimits for all paths you can provide `/` as a global path, for regex paths refer to https://github.com/openresty/lua-nginx-module?tab=readme-ov-file#ngxrematch.
 - `user/IP`: The user or IP address to which the rate limit applies.
 - `limit`: The maximum number of requests allowed within the time window.
 - `window`: The time window in seconds during which the limit applies.
+
+> **if** `0.0.0.0/0` is specified this will apply rate limiting for all incoming ips but per ip, 
+> i.e suppose we have two ips `127.0.0.1` and `127.0.0.2` and rules are set to 10 rps each ip will be able to hit by 10 rps.
 
 ### Environment Variables
 
@@ -114,4 +117,4 @@ The following environment variables need to be set:
 - `MCROUTER_HOST`: The hostname of the McRouter server.
 - `MCROUTER_PORT`: The port of the McRouter server.
 
-> To enable either **FastCGI** or **HTTP** upstreams, set the **UPSTREAM_TYPE** environment variable to the desired value (**fastcgi** or **http**).
+> To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
