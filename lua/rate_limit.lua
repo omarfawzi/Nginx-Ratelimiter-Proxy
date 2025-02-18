@@ -23,7 +23,7 @@ local function apply_rate_limiting(path, key, rule, cache, throttle_config)
     if desired_delay then
         if desired_delay > CACHE_THRESHOLD then
             local ok
-            ok, err = cache:safe_add(namespaced_key_value, true, desired_delay)
+            ok, err = cache:safe_add(cache_key, true, desired_delay)
             if not ok then
                 if err ~= "exists" then
                     ngx.log(ngx.ERR, "failed to cache decision: ", err)
