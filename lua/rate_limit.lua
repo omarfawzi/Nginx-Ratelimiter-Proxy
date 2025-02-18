@@ -9,6 +9,8 @@ local ALL_IPS_RANGE = '0.0.0.0/0'
 local GLOBAL_PATH = '/' 
 
 local function apply_rate_limiting(path, key, rule, cache, throttle_config)
+    local cache_key = path .. ":" .. key
+
     local my_throttle = global_throttle.new('local', rule.limit, rule.window, throttle_config)
 
     local _, desired_delay
