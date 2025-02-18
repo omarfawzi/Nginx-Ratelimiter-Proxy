@@ -85,7 +85,7 @@ ignoredSegments:
    ips:
       - 127.0.0.1
 
-ratelimits:
+rules:
   /path1:
     user2: { limit: 50, window: 60 }
     "192.168.1.1": { limit: 200, window: 60 }
@@ -93,7 +93,7 @@ ratelimits:
     user3: { limit: 30, window: 60 }
 ```
 - `ignoredSegments`: Defines users and IPs for which rate limiting should be skipped. This is useful for administrative users or specific trusted IPs.
-- `ratelimits`: Contains the rate limit rules for different URI paths.
+- `rules`: Contains the rate limit rules for different URI paths.
 - `path`: The URI path to which the rate limit applies.
 - `user/IP`: The user or IP address to which the rate limit applies.
 - `limit`: The maximum number of requests allowed within the time window.

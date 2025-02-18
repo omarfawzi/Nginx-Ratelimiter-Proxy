@@ -4,7 +4,7 @@ ignoredSegments:
   ips:
     - 127.0.0.1
 
-ratelimits:
+rules:
   /:
     172.20.0.1:
       limit: 10

@@ -67,7 +67,7 @@ local function is_ignored(ip, user, ignored_ips, ignored_users)
     return false
 end
 
-function _M.throttle(ngx, ratelimits, ignored_ips, ignored_users, cache, throttle_config)
+function _M.throttle(ngx, rules, ignored_ips, ignored_users, cache, throttle_config)
     local remote_ip = ngx.var.remote_addr
     local username = util.get_remote_user(ngx)
     local request_path = ngx.var.uri
@@ -76,11 +76,11 @@ function _M.throttle(ngx, ratelimits, ignored_ips, ignored_users, cache, throttl
         return
     end
 
-    if (remote_ip and is_rate_limited(request_path, remote_ip, ratelimits[request_path] or ratelimits[GLOBAL_PATH], cache, throttle_config)) then
+    if (remote_ip and is_rate_limited(request_path, remote_ip, rules[request_path] or rules[GLOBAL_PATH], cache, throttle_config)) then
         return ngx.exit(ngx.HTTP_TOO_MANY_REQUESTS)
     end
 
-    if (username and is_rate_limited(request_path, username, ratelimits[request_path] or ratelimits[GLOBAL_PATH], cache, throttle_config)) then
+    if (username and is_rate_limited(request_path, username, rules[request_path] or rules[GLOBAL_PATH], cache, throttle_config)) then
         return ngx.exit(ngx.HTTP_TOO_MANY_REQUESTS)
     end
 end
