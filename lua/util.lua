@@ -1,5 +1,4 @@
 local _M = {}
-local resty_ipmatcher = require("resty.ipmatcher")
 local ALL_IPS_RANGE = '0.0.0.0/0'
 local GLOBAL_PATH = '/'
 
