@@ -41,15 +41,10 @@ function _M.get_remote_user(ngx)
     return nil
 end
 
-function _M.is_valid_ip(ip)
-    return resty_ipmatcher.parse_ipv4(ip) or resty_ipmatcher.parse_ipv6(ip) or
-            resty_ipmatcher.new({ip}) or resty_ipmatcher.new({ip})
-end
-
 function _M.extract_ips(rate_limits)
     local rate_limit_ips = {}
     for key, value in pairs(rate_limits) do
-        if key ~= ALL_IPS_RANGE and _M.is_valid_ip(key) then
+        if key ~= ALL_IPS_RANGE then
             rate_limit_ips[key] = value
         end
     end

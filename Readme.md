@@ -69,7 +69,7 @@ graph TD
    - **Rate Limit Exceeded**: If the request exceeds the defined rate limit, a 429 Too Many Requests response is immediately returned to the client.
    - **Rate Limit Within Limits**: If the request is within the rate limit, it is proxied to the main application.
    - **Lua Exception Handling**: In the event of an exception within the Lua rate limiting script, the request is still proxied to the main application (this should be carefully considered and potentially logged/monitored).
-   - **IP Precedence**: Explicit IP addresses in the configuration take priority over generic CIDR ranges (e.g., 0.0.0.0/0).
+   - **Rules Precedence**: Explicit IP addresses in the configuration take priority over users and generic CIDR ranges (e.g., 0.0.0.0/0).
 5. **Main Application**: The request is processed by the main application if it passes the rate limiting check.
 6. **Response**: The main application's response travels back through the NGINX proxy to the client.
 
@@ -88,10 +88,13 @@ ignoredSegments:
 
 rules:
   /path1:
-    user2: { limit: 50, window: 60 }
-    "192.168.1.1": { limit: 200, window: 60 }
+    users:
+      user2: { limit: 50, window: 60 }
+    ips:
+      192.168.1.1: { limit: 200, window: 60 }
   /path2:
-    user3: { limit: 30, window: 60 }
+    users:
+      user3: { limit: 30, window: 60 }
 ```
 - `ignoredSegments`: Defines users and IPs for which rate limiting should be skipped. This is useful for administrative users or specific trusted IPs.
 - `rules`: Contains the rate limit rules for different URI paths.

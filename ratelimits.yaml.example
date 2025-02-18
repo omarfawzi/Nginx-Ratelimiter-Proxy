@@ -1,21 +1,31 @@
 ignoredSegments:
   users:
     - admin
+  ips:
+    - 127.0.0.2
 
 rules:
   /:
-    0.0.0.0/0:
-      limit: 10
-      window: 60
+    ips:
+      0.0.0.0/0:
+        limit: 10
+        window: 60
+    users:
+      auth:
+        limit: 20
+        window: 60
   /v1:
-    0.0.0.0/0:
-      limit: 1
-      window: 5
+    ips:
+      0.0.0.0/0:
+        limit: 1
+        window: 5
   /v2:
-    0.0.0.0/0:
-      limit: 2
-      window: 5
+    ips:
+      0.0.0.0/0:
+        limit: 2
+        window: 5
   ^/v3/[0-9]$:
-    0.0.0.0/0:
-      limit: 3
-      window: 5
+    ips:
+      0.0.0.0/0:
+        limit: 3
+        window: 5
