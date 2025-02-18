@@ -104,7 +104,13 @@ rules:
 The following environment variables need to be set:
 
 - `UPSTREAM_HOST`: The hostname of the main application.
+- `UPSTREAM_TYPE`: The type of upstream server. Valid values are:
+   - `http`: For HTTP upstreams.
+   - `fastcgi`: For FastCGI upstreams.
+- `INDEX_FILE`: The default index file for FastCGI upstreams (e.g., `index.php`).
+- `SCRIPT_FILENAME`: The script filename for FastCGI upstreams (e.g., `/var/www/app/public/index.php`).
 - `UPSTREAM_PORT`: The port of the main application.
 - `MCROUTER_HOST`: The hostname of the McRouter server.
 - `MCROUTER_PORT`: The port of the McRouter server.
 
+> To enable either **FastCGI** or **HTTP** upstreams, set the **UPSTREAM_TYPE** environment variable to the desired value (**fastcgi** or **http**).
