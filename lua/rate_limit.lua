@@ -37,7 +37,7 @@ local function apply_rate_limiting(path, key, rule, cache, throttle_config)
 end
 
 local function is_rate_limited(ngx, path, key, rules, cache, throttle_config)
-    local path_rules = util.find_path_rules(ngx, path, rules)
+    local path_rules = util.find_path_rules(ngx, path, rules) or rules[GLOBAL_PATH]
     if not path_rules then return false end
 
     if path_rules[key] then
