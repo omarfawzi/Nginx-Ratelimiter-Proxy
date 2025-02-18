@@ -16,6 +16,21 @@ function _M.find_path_rules(ngx, path, rules)
     end
 end
 
+function _M.get_real_ip(ngx)
+    local cf_connecting_ip = ngx.var.http_cf_connecting_ip
+    if cf_connecting_ip then
+        return cf_connecting_ip
+    end
+
+    local x_forwarded_for = ngx.var.http_x_forwarded_for
+    if x_forwarded_for then
+        local real_ip = x_forwarded_for:match("([^,]+)")
+        return real_ip
+    end
+
+    return ngx.var.remote_addr
+end
+
 function _M.get_remote_user(ngx)
     if ngx.var.remote_user then
         return ngx.var.remote_user

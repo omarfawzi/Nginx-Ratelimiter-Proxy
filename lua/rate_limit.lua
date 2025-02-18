@@ -74,7 +74,7 @@ local function is_ignored(ip, user, ignored_ips, ignored_users)
 end
 
 function _M.throttle(ngx, rules, ignored_ips, ignored_users, cache, throttle_config)
-    local remote_ip = ngx.var.remote_addr
+    local remote_ip = util.get_real_ip(ngx)
     local username = util.get_remote_user(ngx)
     local request_path = ngx.var.uri
 
