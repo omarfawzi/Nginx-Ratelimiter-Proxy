@@ -72,7 +72,7 @@ function _M.throttle(ngx, rules, ignored_ips, ignored_users, cache, throttle_con
     local username = util.get_remote_user(ngx)
     local request_path = ngx.var.uri
 
-    if cache:get(request_path .. ":" .. username) or cache:get(request_path .. ":" .. remote_ip) then
+    if (remote_ip and cache:get(request_path .. ":" .. remote_ip)) or (username and cache:get(request_path .. ":" .. username)) then
         return ngx.exit(ngx.HTTP_TOO_MANY_REQUESTS)
     end
 
