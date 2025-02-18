@@ -15,6 +15,7 @@ graph TD
       C -- Get/Set --> D1[Memcached 1]
       C -- Get/Set --> D2[Memcached 2]
       C -- Get/Set --> D3[Memcached 3]
+      C -- 429 Too Many Requests --> B
 
       classDef memcached fill:#ddf,stroke:#333;
       class D1,D2,D3 memcached
