@@ -1,5 +1,3 @@
-![Test Status](https://github.com/omarfawzi/Nginx-Ratelimiter-Proxy/actions/workflows/ci.yml/badge.svg)
-
 # NGINX Rate Limiter Proxy
 
 ## Overview
