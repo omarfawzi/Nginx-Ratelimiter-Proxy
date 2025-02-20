@@ -3,15 +3,6 @@ stages:
   - test
   - release
 
-test:
-  stage: test
-  rules:
-    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  script:
-    - ls
-    - busted -pattern=_test /usr/local/openresty/nginx/lua
-
 build:
   stage: build
   image: $DOCKER_CACHE_REGISTRY/docker:23
@@ -27,6 +18,15 @@ build:
     - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker build -f $BUILD_DOCKERFILE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $BUILD_WORKDIR
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
+test:
+  stage: test
+  rules:
+    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  script:
+    - ls
+    - busted -pattern=_test lua
 
 release:
   stage: release
