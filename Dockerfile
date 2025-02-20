@@ -11,8 +11,6 @@ WORKDIR /usr/local/openresty/nginx/lua
 
 COPY lua/* .
 
-COPY nginx/nginx-base.conf /usr/local/openresty/nginx/conf/nginx-base.conf
-
 FROM base AS docker
 COPY nginx/nginx.docker.conf /usr/local/openresty/nginx/conf/nginx.conf
 
