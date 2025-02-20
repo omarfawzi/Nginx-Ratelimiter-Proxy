@@ -1,4 +1,4 @@
-FROM openresty/openresty:alpine-fat
+FROM openresty/openresty:alpine-fat AS base
 
 RUN apk add --no-cache git yaml-dev
 
@@ -11,6 +11,19 @@ WORKDIR /usr/local/openresty/nginx/lua
 
 COPY lua/* .
 
+COPY nginx/nginx-base.conf /usr/local/openresty/nginx/conf/nginx-base.conf
+
+FROM base AS docker
+COPY nginx/nginx.docker.conf /usr/local/openresty/nginx/conf/nginx.conf
+
+CMD ["/usr/local/openresty/bin/openresty", "-g", "daemon off;"]
+
+FROM base AS kube
 COPY nginx/nginx.kube.conf /usr/local/openresty/nginx/conf/nginx.conf
+
+CMD ["/usr/local/openresty/bin/openresty", "-g", "daemon off;"]
+
+FROM base AS local
+COPY nginx/nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 
 CMD ["/usr/local/openresty/bin/openresty", "-g", "daemon off;"]

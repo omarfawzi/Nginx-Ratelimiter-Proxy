@@ -5,7 +5,9 @@ services:
       - UPSTREAM_PORT=9000
       - MCROUTER_HOST=mcrouter
       - MCROUTER_PORT=5000
-    build: .
+    build:
+      context: .
+      target: docker
     ports:
       - "8080:49152"
     volumes:
