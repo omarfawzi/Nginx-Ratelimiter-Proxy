@@ -66,18 +66,16 @@ jobs:
             luacov &&
             mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out || echo 'Coverage report not found!'"
 
-      - name: Debug Coverage Report
-        run: |
-          echo "Checking coverage directory:"
-          ls -lah coverage/ || echo "Coverage directory is missing!"
-          echo "Checking coverage file:"
-          cat coverage/coverage.out || echo "Coverage report is missing!"
-
       - name: Upload Coverage Report as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/coverage.out
+
+      - name: Convert LuaCov to lcov
+        run: |
+          luarocks install luacov-reporter-lcov
+          luacov-reporter-lcov -i coverage/coverage.out > coverage/lcov.info
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v5
