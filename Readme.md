@@ -70,7 +70,7 @@ graph TD
 3. **Rate Limiting**: The proxy checks the request against the rate limiting rules defined in the YAML file.
 4. **Decision-Making & Request Handling**:
    - **Ignored Segments**: The request IP/user is first checked against the ignoredSegments configuration. If matched, rate limiting is bypassed, and the request is forwarded.
-   - **Rate Limit Exceeded**: If the request exceeds the defined rate limit, a 429 Too Many Requests response is immediately returned to the client.
+   - **Rate Limit Exceeded**: If the request exceeds the defined rate limit, a `429 Too Many Requests` response is immediately returned to the client.
    - **Rate Limit Within Limits**: If the request is within the rate limit, it is proxied to the main application.
    - **Lua Exception Handling**: In the event of an exception within the Lua rate limiting script, the request is still proxied to the main application (this should be carefully considered and potentially logged/monitored).
    - **Rules Precedence**: Explicit IP addresses in the configuration take priority over users and generic CIDR ranges (e.g., 0.0.0.0/0).
