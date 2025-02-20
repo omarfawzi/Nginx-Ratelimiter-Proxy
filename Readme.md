@@ -127,8 +127,8 @@ The following environment variables need to be set:
 - `INDEX_FILE`: The default index file for FastCGI upstreams (e.g., `index.php`).
 - `SCRIPT_FILENAME`: The script filename for FastCGI upstreams (e.g., `/var/www/app/public/index.php`).
 - `UPSTREAM_PORT`: The port of the main application.
-- `MCROUTER_HOST`: The hostname of the McRouter server.
-- `MCROUTER_PORT`: The port of the McRouter server.
+- `MCROUTER_HOST`: The hostname of the [McRouter](https://github.com/facebook/mcrouter) server (can also be memcached host).
+- `MCROUTER_PORT`: The port of the [McRouter](https://github.com/facebook/mcrouter) server (can also be memcached port).
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
