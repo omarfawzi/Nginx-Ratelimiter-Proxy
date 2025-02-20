@@ -60,11 +60,7 @@ jobs:
         run: docker pull ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
       - name: Run Tests with Coverage
-        run: |
-          docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} sh -c "
-            busted --coverage --pattern=_test /usr/local/openresty/nginx/lua &&
-            luacov &&
-            mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out || echo 'Coverage report not found!'"
+        run: docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out"
 
       - name: Upload Coverage Report as Artifact
         uses: actions/upload-artifact@v4
@@ -72,13 +68,9 @@ jobs:
           name: coverage-report
           path: coverage/coverage.out
 
-      - name: Convert LuaCov to lcov
-        run: |
-          luarocks install luacov-reporter-lcov
-          luacov-reporter-lcov -i coverage/coverage.out > coverage/lcov.info
-
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v4
         with:
-          files: coverage/lcov.info
+          files: coverage/coverage.out
           token: ${{ secrets.CODECOV_TOKEN }}
+
