@@ -60,7 +60,18 @@ jobs:
         run: docker pull ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
       - name: Run Tests with Coverage
-        run: docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out"
+        run: |
+          docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} sh -c "
+            busted --coverage --pattern=_test /usr/local/openresty/nginx/lua &&
+            luacov &&
+            mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out || echo 'Coverage report not found!'"
+
+      - name: Debug Coverage Report
+        run: |
+          echo "Checking coverage directory:"
+          ls -lah coverage/ || echo "Coverage directory is missing!"
+          echo "Checking coverage file:"
+          cat coverage/coverage.out || echo "Coverage report is missing!"
 
       - name: Upload Coverage Report as Artifact
         uses: actions/upload-artifact@v4
@@ -71,6 +82,5 @@ jobs:
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: coverage.out
+          files: coverage/coverage.out
           token: ${{ secrets.CODECOV_TOKEN }}
-
