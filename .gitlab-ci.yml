@@ -8,7 +8,7 @@ test:
     - if: "$CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   script:
-    - busted /usr/local/openresty/nginx/lua
+    - busted -pattern=_test /usr/local/openresty/nginx/lua
 
 build:
   stage: build
@@ -29,7 +29,7 @@ build:
       if [ -n "$CI_COMMIT_TAG" ]; then
         DOCKER_BUILD_CMD="$DOCKER_BUILD_CMD -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG $BUILD_WORKDIR"
       else
-        DOCKER_BUILD_CMD="$DOCKER_BUILD_CMD -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $BUILD_WORKDIR --target tester"
+        DOCKER_BUILD_CMD="$DOCKER_BUILD_CMD -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $BUILD_WORKDIR"
       fi
     - eval "$DOCKER_BUILD_CMD"
     - docker push $CI_REGISTRY_IMAGE --all-tags
