@@ -60,8 +60,7 @@ jobs:
         run: docker pull ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
       - name: Run Tests with Coverage
-        run: docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} \
-          sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out"
+        run: docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out"
 
       - name: Upload Coverage Report as Artifact
         uses: actions/upload-artifact@v4
