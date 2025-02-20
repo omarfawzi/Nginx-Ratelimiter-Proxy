@@ -60,18 +60,7 @@ jobs:
         run: docker pull ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
       - name: Run Tests with Coverage
-        run: |
-          docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} sh -c "
-            busted --coverage --pattern=_test /usr/local/openresty/nginx/lua &&
-            ls -l /usr/local/openresty/nginx/lua &&
-            cat /usr/local/openresty/nginx/lua/luacov.report.out || echo 'luacov.report.out not found' &&
-            mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out
-          "
-
-      - name: Debug Coverage Output
-        run: |
-          ls -l /coverage
-          cat /coverage/coverage.out || echo "Coverage file not found!"
+        run: docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out"
 
       - name: Upload Coverage Report as Artifact
         uses: actions/upload-artifact@v4
