@@ -131,3 +131,18 @@ The following environment variables need to be set:
 - `MCROUTER_PORT`: The port of the McRouter server.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
+
+## Running the Proxy
+
+To run the NGINX Rate Limiter Proxy using Docker, you need to mount the rate limit configuration file and set the required environment variables.
+
+```sh
+docker run --rm --platform linux/amd64 \
+  -v $(pwd)/ratelimits.yaml:/usr/local/openresty/nginx/lua/ratelimits.yaml \
+  -e UPSTREAM_HOST=localhost \
+  -e UPSTREAM_TYPE=http \
+  -e UPSTREAM_PORT=3000 \
+  -e MCROUTER_HOST=mcrouter \
+  -e MCROUTER_PORT=5000 \
+  ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
+```
