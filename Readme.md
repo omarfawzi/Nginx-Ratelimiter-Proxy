@@ -132,7 +132,7 @@ The following environment variables need to be set:
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
-## Running the Proxy
+### Running the Proxy
 
 To run the NGINX Rate Limiter Proxy using Docker, you need to mount the rate limit configuration file and set the required environment variables.
 
@@ -145,4 +145,41 @@ docker run --rm --platform linux/amd64 \
   -e MCROUTER_HOST=mcrouter \
   -e MCROUTER_PORT=5000 \
   ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
+```
+
+### Request flow 
+
+```mermaid
+graph TD
+    subgraph IP Rules
+        CheckIPRule{Is there an exact IP rule?} -->|Yes| ApplyIPRateLimit["Apply Rate Limit for IP"]
+        ApplyIPRateLimit --> CheckLimit{Exceeded Limit?}
+    end
+
+    subgraph User Rules
+        CheckUserRule{Is there a user rule?} -->|Yes| ApplyUserRateLimit["Apply Rate Limit for User"]
+        ApplyUserRateLimit --> CheckLimit
+    end
+
+    subgraph CIDR Rules
+        CheckCIDRRule{Does IP match CIDR rule?} -->|Yes| ApplyCIDRRateLimit["Apply Rate Limit for IP CIDR"]
+        ApplyCIDRRateLimit --> CheckLimit
+    end
+
+    subgraph Global Rules
+        CheckGlobalIPRule{Is there a global IP rule?} -->|Yes| ApplyGlobalIPRateLimit["Apply Global Rate Limit"]
+        ApplyGlobalIPRateLimit --> CheckLimit
+    end
+
+    Start["Request Received"] --> CheckIgnore{Is IP or User Ignored?}
+    CheckIgnore -->|Yes| AllowRequest["Allow Request"]
+    CheckIgnore -->|No| CheckIPRule
+
+    CheckIPRule -->|No| CheckUserRule
+    CheckUserRule -->|No| CheckCIDRRule
+    CheckCIDRRule -->|No| CheckGlobalIPRule
+    CheckGlobalIPRule -->|No| AllowRequest
+
+    CheckLimit -->|Yes| ThrottleResponse["Return 429 Too Many Requests"]
+    CheckLimit -->|No| AllowRequest
 ```
