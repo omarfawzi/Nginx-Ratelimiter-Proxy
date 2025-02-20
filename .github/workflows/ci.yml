@@ -32,8 +32,9 @@ jobs:
       - name: Convert Repository Name to Lowercase
         run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Build and Push Local Docker Image
+      - name: Build and Push Release Docker Image
         uses: docker/build-push-action@v5
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           context: .
           file: ./Dockerfile
@@ -105,7 +106,7 @@ jobs:
       - name: Convert Repository Name to Lowercase
         run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Pull Local Docker Image
+      - name: Pull Release Docker Image
         run: docker pull ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
       - name: Tag and Push Release Image
