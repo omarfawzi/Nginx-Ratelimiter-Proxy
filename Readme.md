@@ -1,4 +1,5 @@
 ![Test Status](https://github.com/omarfawzi/Nginx-Ratelimiter-Proxy/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/github/omarfawzi/Nginx-Ratelimiter-Proxy/graph/badge.svg?token=UAFTLUSL8R)](https://codecov.io/github/omarfawzi/Nginx-Ratelimiter-Proxy)
 
 # NGINX Rate Limiter Proxy
 
