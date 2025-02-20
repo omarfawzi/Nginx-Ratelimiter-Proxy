@@ -59,5 +59,12 @@ jobs:
       - name: Pull Built Docker Image
         run: docker pull ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
-      - name: Run Tests Inside Docker Container
-        run: docker run --rm ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} busted -pattern=_test /usr/local/openresty/nginx/lua
+      - name: Run Tests with Coverage
+        run: docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} \
+          sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out"
+
+      - name: Upload Coverage Report as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/coverage.out
