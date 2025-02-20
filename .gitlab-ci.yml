@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - release
 
 test:
   stage: test
@@ -8,6 +9,7 @@ test:
     - if: "$CI_PIPELINE_SOURCE == 'merge_request_event' || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
   image: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   script:
+    - ls
     - busted -pattern=_test /usr/local/openresty/nginx/lua
 
 build:
@@ -24,12 +26,19 @@ build:
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
     - IMAGES_BUILT="$CI_REGISTRY_IMAGE"
-    - DOCKER_BUILD_CMD="docker build -f $BUILD_DOCKERFILE"
-    - >
-      if [ -n "$CI_COMMIT_TAG" ]; then
-        DOCKER_BUILD_CMD="$DOCKER_BUILD_CMD -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG $BUILD_WORKDIR"
-      else
-        DOCKER_BUILD_CMD="$DOCKER_BUILD_CMD -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $BUILD_WORKDIR"
-      fi
+    - DOCKER_BUILD_CMD="docker build -f $BUILD_DOCKERFILE -t $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $BUILD_WORKDIR"
     - eval "$DOCKER_BUILD_CMD"
-    - docker push $CI_REGISTRY_IMAGE --all-tags
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
+release:
+  stage: release
+  image: $DOCKER_CACHE_REGISTRY/docker:23
+  rules:
+    - if: $CI_COMMIT_TAG
+  services:
+    - $DOCKER_CACHE_REGISTRY/docker:23-dind
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
