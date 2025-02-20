@@ -6,6 +6,8 @@
 
 This lightweight rate limiter acts as a reverse proxy in front of your main application, controlling incoming traffic and enforcing rate limits before requests reach your backend. It helps protect your application from excessive traffic and potential abuse.
 
+Primarily developed to function as a Kubernetes sidecar proxy, this rate limiter enhances application security and performance within a Kubernetes environment.
+
 The rate limiter is implemented using Lua scripting within NGINX, leveraging the `lua-resty-global-throttle` and `lua-resty-ipmatcher` libraries. Rate limit configurations are defined in a YAML file, allowing flexible and dynamic rule enforcement.
 
 ## Architecture
