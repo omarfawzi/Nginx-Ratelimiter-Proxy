@@ -5,7 +5,8 @@ RUN apk add --no-cache git yaml-dev
 RUN /usr/local/openresty/luajit/bin/luarocks install lua-resty-ipmatcher && \
     /usr/local/openresty/luajit/bin/luarocks install lua-resty-global-throttle && \
     /usr/local/openresty/luajit/bin/luarocks install lyaml && \
-    /usr/local/openresty/luajit/bin/luarocks install busted
+    /usr/local/openresty/luajit/bin/luarocks install busted && \
+    /usr/local/openresty/luajit/bin/luarocks install luacov
 
 WORKDIR /usr/local/openresty/nginx/lua
 
