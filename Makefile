@@ -10,4 +10,4 @@ stop:
 restart: stop start
 
 tests:
-	docker-compose up test
+	docker-compose up tests
