@@ -70,7 +70,7 @@ graph TD
 3. **Rate Limiting**: The proxy checks the request against the rate limiting rules defined in the YAML file.
 4. **Decision-Making & Request Handling**:
    - **Ignored Segments**: The request IP/user is first checked against the ignoredSegments configuration. If matched, rate limiting is bypassed, and the request is forwarded.
-   - **Rate Limit Exceeded**: If the request exceeds the defined rate limit, a 429 Too Many Requests response is immediately returned to the client.
+   - **Rate Limit Exceeded**: If the request exceeds the defined rate limit, a `429 Too Many Requests` response is immediately returned to the client.
    - **Rate Limit Within Limits**: If the request is within the rate limit, it is proxied to the main application.
    - **Lua Exception Handling**: In the event of an exception within the Lua rate limiting script, the request is still proxied to the main application (this should be carefully considered and potentially logged/monitored).
    - **Rules Precedence**: Explicit IP addresses in the configuration take priority over users and generic CIDR ranges (e.g., 0.0.0.0/0).
@@ -127,8 +127,8 @@ The following environment variables need to be set:
 - `INDEX_FILE`: The default index file for FastCGI upstreams (e.g., `index.php`).
 - `SCRIPT_FILENAME`: The script filename for FastCGI upstreams (e.g., `/var/www/app/public/index.php`).
 - `UPSTREAM_PORT`: The port of the main application.
-- `MCROUTER_HOST`: The hostname of the McRouter server.
-- `MCROUTER_PORT`: The port of the McRouter server.
+- `MCROUTER_HOST`: The hostname of the [McRouter](https://github.com/facebook/mcrouter) server (can also be memcached host).
+- `MCROUTER_PORT`: The port of the [McRouter](https://github.com/facebook/mcrouter) server (can also be memcached port).
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
