@@ -30,3 +30,11 @@ services:
       - "5001:5000"
     depends_on:
       - memcached
+
+  test:
+    build:
+      context: .
+      target: test
+    volumes:
+      - ${PWD}/lua:/usr/local/openresty/nginx/lua
+    command: busted --pattern=_test /usr/local/openresty/nginx/lua

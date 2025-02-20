@@ -10,5 +10,4 @@ stop:
 restart: stop start
 
 tests:
-	docker-compose up proxy -d
-	docker-compose exec proxy busted --pattern=_test /usr/local/openresty/nginx/lua
+	docker-compose up test
