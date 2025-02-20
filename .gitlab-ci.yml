@@ -23,15 +23,17 @@ test:
   needs:
     - build
   stage: test
-  image: docker:23
+  image: $DOCKER_CACHE_REGISTRY/docker:23
   services:
-    - docker:23-dind
+    - $DOCKER_CACHE_REGISTRY/docker:23-dind
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     - docker run --rm $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG busted -pattern=_test /usr/local/openresty/nginx/lua
 
 release:
+  needs:
+    - test
   stage: release
   image: $DOCKER_CACHE_REGISTRY/docker:23
   rules:
