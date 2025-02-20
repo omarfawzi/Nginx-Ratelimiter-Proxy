@@ -1,5 +1,5 @@
 services:
-  web:
+  proxy:
     environment:
       - UPSTREAM_HOST=127.0.0.1
       - UPSTREAM_PORT=9000
@@ -9,9 +9,9 @@ services:
     ports:
       - "8080:49152"
     volumes:
-      - ${PWD}/lua/rate_limit.lua:/usr/local/openresty/nginx/lua/rate_limit.lua
-      - ${PWD}/nginx/nginx.docker.conf:/usr/local/openresty/nginx/conf/nginx.conf
       - ${PWD}/ratelimits.yaml:/usr/local/openresty/nginx/lua/ratelimits.yaml
+      - ${PWD}/lua:/usr/local/openresty/nginx/lua
+      - ${PWD}/nginx/nginx.docker.conf:/usr/local/openresty/nginx/conf/nginx.conf
     depends_on:
       - mcrouter
 

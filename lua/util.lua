@@ -33,7 +33,7 @@ end
 function _M.get_remote_user(ngx)
     if ngx.var.remote_user then
         return ngx.var.remote_user
-    elseif ngx.req.get_headers()['Authorization'] then
+    elseif ngx.req and ngx.req.get_headers()['Authorization'] then
         return extract_remote_user_from_authorization_header(ngx.req.get_headers()['Authorization'])
     end
 

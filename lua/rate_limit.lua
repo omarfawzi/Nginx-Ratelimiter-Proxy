@@ -1,4 +1,3 @@
-local global_throttle = require("resty.global_throttle")
 local resty_ipmatcher = require("resty.ipmatcher")
 local util = require("util")
 
@@ -8,7 +7,9 @@ local CACHE_THRESHOLD = 0.001
 local ALL_IPS_RANGE = '0.0.0.0/0'
 local GLOBAL_PATH = '/'
 
-local function apply_rate_limiting(path, key, rule, cache, throttle_config)
+function _M.apply_rate_limiting(path, key, rule, cache, throttle_config)
+    local global_throttle = require("resty.global_throttle")
+
     local cache_key = path .. ":" .. key
 
     local my_throttle = global_throttle.new('local', rule.limit, rule.window, throttle_config)
@@ -41,22 +42,22 @@ local function is_rate_limited(ngx, path, remote_ip, username, rules, cache, thr
     if not path_rules then return false end
 
     if remote_ip and path_rules['ips'] and path_rules['ips'][remote_ip] then
-        return apply_rate_limiting(path, remote_ip, path_rules['ips'][remote_ip], cache, throttle_config)
+        return _M.apply_rate_limiting(path, remote_ip, path_rules['ips'][remote_ip], cache, throttle_config)
     end
 
     if username and path_rules['users'] and path_rules['users'][username] then
-        return apply_rate_limiting(path, username, path_rules['users'][username], cache, throttle_config)
+        return _M.apply_rate_limiting(path, username, path_rules['users'][username], cache, throttle_config)
     end
 
     if remote_ip and path_rules['ips'] then
         local ip_matcher = resty_ipmatcher.new(util.extract_ips(path_rules['ips']))
         if ip_matcher and ip_matcher:match(remote_ip) then
-            return apply_rate_limiting(path, remote_ip, path_rules['ips'][ip_matcher:match(remote_ip)])
+            return _M.apply_rate_limiting(path, remote_ip, path_rules['ips'][ip_matcher:match(remote_ip)])
         end
     end
 
     if remote_ip and path_rules['ips'] and path_rules['ips'][ALL_IPS_RANGE] then
-        return apply_rate_limiting(path, remote_ip, path_rules['ips'][ALL_IPS_RANGE], cache, throttle_config)
+        return _M.apply_rate_limiting(path, remote_ip, path_rules['ips'][ALL_IPS_RANGE], cache, throttle_config)
     end
 
     return false
@@ -95,9 +96,4 @@ function _M.throttle(ngx, rules, ignored_ips, ignored_users, cache, throttle_con
     end
 end
 
-return {
-    throttle = _M.throttle,
-    apply_rate_limiting = apply_rate_limiting,
-    is_rate_limited = is_rate_limited,
-    is_ignored = is_ignored
-}
+return _M
