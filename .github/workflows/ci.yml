@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write  # Required for GHCR
+      packages: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -29,13 +29,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Convert Repository Name to Lowercase
+        run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          tags: ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
   test:
     name: Run Tests
@@ -49,11 +52,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Convert Repository Name to Lowercase
+        run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Pull Built Docker Image
-        run: docker pull ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+        run: docker pull ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
       - name: Run Tests Inside Docker Container
-        run: docker run --rm ghcr.io/${{ github.repository }}:${{ github.ref_name }} busted -pattern=_test /usr/local/openresty/nginx/lua
+        run: docker run --rm ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} busted -pattern=_test /usr/local/openresty/nginx/lua
 
   release:
     name: Release Tagged Image
@@ -68,10 +74,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Convert Repository Name to Lowercase
+        run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Pull Docker Image
-        run: docker pull ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+        run: docker pull ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
 
       - name: Tag and Push Image
         run: |
-          docker tag ghcr.io/${{ github.repository }}:${{ github.ref_name }} ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-          docker push ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          docker tag ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }} ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
+          docker push ghcr.io/${{ env.REPO_NAME }}:${{ github.ref_name }}
