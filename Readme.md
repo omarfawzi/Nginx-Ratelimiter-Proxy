@@ -18,7 +18,7 @@ This lightweight rate limiter serves as a **reverse proxy**, regulating incoming
 ## Architecture
 
 ```mermaid
-graph LR
+graph TD
    subgraph Infrastructure
       B[Nginx Proxy] -- Rate Limit Check --> C{Store}
       C -- 429 Too Many Requests --> B
