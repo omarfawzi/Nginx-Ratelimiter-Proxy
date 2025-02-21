@@ -150,7 +150,7 @@ docker run --rm --platform linux/amd64 \
 
 ### Listening Port and Custom Configurations
 
-By default, the NGINX Rate Limiter Proxy listens on port `49152`. However, this can be overridden by mounting a custom `listen.conf` file to the following path:`/usr/local/openresty/nginx/conf/listen.conf` .
+By default, the NGINX Rate Limiter Proxy listens on port `80`. However, this can be overridden by mounting a custom `listen.conf` file to the following path:`/usr/local/openresty/nginx/conf/listen.conf` .
 
 #### Custom Logic and Caching
 

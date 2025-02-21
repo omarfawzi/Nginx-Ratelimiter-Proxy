@@ -9,7 +9,7 @@ services:
       context: .
       target: docker
     ports:
-      - "8080:49152"
+      - "8080:80"
     volumes:
       - ${PWD}/ratelimits.yaml:/usr/local/openresty/nginx/lua/ratelimits.yaml
       - ${PWD}/lua:/usr/local/openresty/nginx/lua
