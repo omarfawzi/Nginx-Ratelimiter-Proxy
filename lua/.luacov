@@ -11,7 +11,7 @@ return {
   },
 
   ["exclude"] = {
-    "usr/local/openresty/luajit/share/lua/5.1/.*"
+    "usr/local/openresty/luajit/.*"
   },
 
 }
