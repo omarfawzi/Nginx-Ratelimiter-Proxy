@@ -19,6 +19,7 @@ COPY nginx/base/dynamic_upstream.conf /usr/local/openresty/nginx/conf/dynamic_up
 COPY nginx/base/log_format.conf /usr/local/openresty/nginx/conf/log_format.conf
 COPY nginx/base/custom.conf /usr/local/openresty/nginx/conf/custom.conf
 COPY nginx/base/listen.conf /usr/local/openresty/nginx/conf/listen.conf
+COPY nginx/base/main.conf /usr/local/openresty/nginx/conf/main.conf
 
 FROM config AS docker
 COPY nginx/nginx.docker.conf /usr/local/openresty/nginx/conf/nginx.conf
