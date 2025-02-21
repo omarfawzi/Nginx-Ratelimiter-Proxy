@@ -3,8 +3,8 @@ services:
     environment:
       - UPSTREAM_HOST=127.0.0.1
       - UPSTREAM_PORT=9000
-      - MCROUTER_HOST=mcrouter
-      - MCROUTER_PORT=5000
+      - DISTRIBUTED_CACHE_HOST=mcrouter
+      - DISTRIBUTED_CACHE_PORT=5000
     build:
       context: .
       target: docker

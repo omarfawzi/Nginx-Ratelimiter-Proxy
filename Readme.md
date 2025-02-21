@@ -14,16 +14,10 @@ The rate limiter is implemented using Lua scripting within NGINX, leveraging the
 ## Architecture
 
 ```mermaid
-graph TD
+graph LR
    subgraph Infrastructure
-      B[Nginx Proxy] -- Rate Limit Check --> C{Mcrouter}
-      C -- Get/Set --> D1[Memcached 1]
-      C -- Get/Set --> D2[Memcached 2]
-      C -- Get/Set --> D3[Memcached 3]
+      B[Nginx Proxy] -- Rate Limit Check --> C{Store}
       C -- 429 Too Many Requests --> B
-
-      classDef memcached fill:#ddf,stroke:#333;
-      class D1,D2,D3 memcached
 
       style B fill:#f9f,stroke:#333,stroke-width:2px
       style C fill:#ccf,stroke:#333,stroke-width:2px
@@ -51,10 +45,8 @@ graph TD
    classDef proxy fill:#f9f,stroke:#333
    class B proxy
 
-   linkStyle 0,4 stroke:#0aa,stroke-width:2px;
-   linkStyle 5,6 stroke:#080,stroke-width:2px;
-   linkStyle 1,2,3 stroke:#888,stroke-width:1.5px,stroke-dasharray: 5 5;
-   linkStyle 6 stroke:#080,stroke-width:2px;
+   linkStyle 0,1,2,3 stroke:#0aa,stroke-width:2px;
+   linkStyle 4,5 stroke:#080,stroke-width:2px;
    
    classDef cache fill:#ddf,stroke:#333
    class D1,D2,D3 cache
@@ -128,8 +120,8 @@ The following environment variables need to be set:
 - `INDEX_FILE`: The default index file for FastCGI upstreams (e.g., `index.php`).
 - `SCRIPT_FILENAME`: The script filename for FastCGI upstreams (e.g., `/var/www/app/public/index.php`).
 - `UPSTREAM_PORT`: The port of the main application.
-- `MCROUTER_HOST`: The hostname of the [McRouter](https://github.com/facebook/mcrouter) server (can also be memcached host).
-- `MCROUTER_PORT`: The port of the [McRouter](https://github.com/facebook/mcrouter) server (can also be memcached port).
+- `DISTRIBUTED_CACHE_HOST`: The hostname of the distributed cache host.
+- `DISTRIBUTED_CACHE_PORT`: The port of the distributed cache port.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
@@ -143,8 +135,8 @@ docker run --rm --platform linux/amd64 \
   -e UPSTREAM_HOST=localhost \
   -e UPSTREAM_TYPE=http \
   -e UPSTREAM_PORT=3000 \
-  -e MCROUTER_HOST=mcrouter \
-  -e MCROUTER_PORT=5000 \
+  -e DISTRIBUTED_CACHE_HOST=mcrouter \
+  -e DISTRIBUTED_CACHE_PORT=5000 \
   ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
 ```
 
