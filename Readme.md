@@ -5,11 +5,15 @@
 
 ## Overview
 
-This lightweight rate limiter acts as a reverse proxy in front of your main application, controlling incoming traffic and enforcing rate limits before requests reach your backend. It helps protect your application from excessive traffic and potential abuse.
+This lightweight rate limiter serves as a **reverse proxy**, regulating incoming traffic and enforcing rate limits **before requests reach your backend**. By controlling excessive traffic and potential abuse, it enhances both security and performance.
 
-Primarily developed to function as a **Kubernetes Sidecar Proxy** before traffic enters your main application container, this rate limiter enhances application security and performance within a Kubernetes environment.
+## Key Features
 
-The rate limiter is implemented using Lua scripting within NGINX, leveraging the `lua-resty-global-throttle` and `lua-resty-ipmatcher` libraries. Rate limit configurations are defined in a YAML file, allowing flexible and dynamic rule enforcement.
+- **Kubernetes Sidecar Proxy**: Designed to manage traffic **before it enters your main application container**, ensuring seamless rate limiting within a Kubernetes environment.
+- **NGINX + Lua**: Implemented using **Lua scripting within NGINX**, leveraging `lua-resty-global-throttle` and `lua-resty-redis`.
+- **Flexible Caching**: Supports both **Redis** and **Memcached** as distributed caching providers.
+- **Configurable Rules**: Rate limit rules are **defined in a YAML file**, allowing for flexible and dynamic configurations.
+- **Sliding Window Algorithm**: Uses a **sliding window rate-limiting algorithm** for both caching providers, ensuring fair and efficient traffic control.
 
 ## Architecture
 
@@ -122,6 +126,7 @@ The following environment variables need to be set:
 - `UPSTREAM_PORT`: The port of the main application.
 - `DISTRIBUTED_CACHE_HOST`: The hostname of the distributed cache host.
 - `DISTRIBUTED_CACHE_PORT`: The port of the distributed cache port.
+- `DISTRIBUTED_CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
@@ -137,6 +142,7 @@ docker run --rm --platform linux/amd64 \
   -e UPSTREAM_PORT=3000 \
   -e DISTRIBUTED_CACHE_HOST=mcrouter \
   -e DISTRIBUTED_CACHE_PORT=5000 \
+  -e DISTRIBUTED_CACHE_PROVIDER=memcached \
   ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
 ```
 
