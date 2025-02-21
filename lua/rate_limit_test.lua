@@ -1,15 +1,3 @@
-_G.ngx = {
-    var = { uri = '/' },
-    log = function() end,
-    exit = function() end,
-    HTTP_TOO_MANY_REQUESTS = 429,
-    re = {
-        match = function(path, pattern)
-            return string.match(path, pattern)
-        end
-    }
-}
-
 package.loaded["resty.global_throttle"] = {
     new = function()
         return {
@@ -64,7 +52,17 @@ local stub = require('luassert.stub')
 local spy = require('luassert.spy')
 
 local function mock_ngx()
-    return _G.ngx
+    return {
+        var = { uri = '/' },
+        log = function() end,
+        exit = function() end,
+        HTTP_TOO_MANY_REQUESTS = 429,
+        re = {
+            match = function(path, pattern)
+                return string.match(path, pattern)
+            end
+        }
+    }
 end
 
 describe('Rate Limiting', function()
