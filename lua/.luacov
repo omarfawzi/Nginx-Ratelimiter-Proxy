@@ -1,0 +1,17 @@
+return {
+
+  ["configfile"] = ".luacov",
+
+  ["statsfile"] = "luacov.stats.out",
+
+  ["reportfile"] = "luacov.report.out",
+
+  ["include"] = {
+    "usr/local/openresty/nginx/lua/.*"
+  },
+
+  ["exclude"] = {
+    "usr/local/openresty/luajit/share/lua/5.1/.*"
+  },
+
+}
