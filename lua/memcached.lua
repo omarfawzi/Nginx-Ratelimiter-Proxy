@@ -8,8 +8,8 @@ function _M.throttle(ngx, path, key, rule, cache)
 
     local throttle = global_throttle.new('local', rule.limit, rule.window, {
         provider = 'memcached',
-        host = os.getenv('DISTRIBUTED_CACHE_HOST'),
-        port = os.getenv('DISTRIBUTED_CACHE_PORT'),
+        host = os.getenv('CACHE_HOST'),
+        port = tonumber(os.getenv('CACHE_PORT')),
         connect_timeout = 50,
         max_idle_timeout = 50,
         pool_size = 50

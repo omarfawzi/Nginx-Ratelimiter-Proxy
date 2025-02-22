@@ -7,7 +7,7 @@ local ALL_IPS_RANGE = '0.0.0.0/0'
 local GLOBAL_PATH = '/'
 
 function _M.apply_rate_limiting(ngx, path, key, rule, cache)
-    local provider = os.getenv('DISTRIBUTED_CACHE_PROVIDER') or 'memcached'
+    local provider = os.getenv('CACHE_PROVIDER') or 'memcached'
 
     if provider == 'memcached' then
         return require('memcached').throttle(ngx, path, key, rule, cache)

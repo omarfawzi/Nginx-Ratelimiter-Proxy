@@ -113,6 +113,8 @@ rules:
 > **if** `0.0.0.0/0` is specified this will apply rate limiting for all incoming ips but per ip, 
 > i.e suppose we have two ips `127.0.0.1` and `127.0.0.2` and rules are set to 10 rps each ip will be able to hit by 10 rps.
 
+> 🔹 You should mount your `ratelimits.yaml` to `/usr/local/openresty/nginx/lua/ratelimits.yaml`.
+
 ### Environment Variables
 
 The following environment variables need to be set:
@@ -124,9 +126,9 @@ The following environment variables need to be set:
 - `INDEX_FILE`: The default index file for FastCGI upstreams (e.g., `index.php`).
 - `SCRIPT_FILENAME`: The script filename for FastCGI upstreams (e.g., `/var/www/app/public/index.php`).
 - `UPSTREAM_PORT`: The port of the main application.
-- `DISTRIBUTED_CACHE_HOST`: The hostname of the distributed cache host.
-- `DISTRIBUTED_CACHE_PORT`: The port of the distributed cache port.
-- `DISTRIBUTED_CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
+- `CACHE_HOST`: The hostname of the distributed cache host.
+- `CACHE_PORT`: The port of the distributed cache port.
+- `CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
@@ -140,9 +142,9 @@ docker run --rm --platform linux/amd64 \
   -e UPSTREAM_HOST=localhost \
   -e UPSTREAM_TYPE=http \
   -e UPSTREAM_PORT=3000 \
-  -e DISTRIBUTED_CACHE_HOST=mcrouter \
-  -e DISTRIBUTED_CACHE_PORT=5000 \
-  -e DISTRIBUTED_CACHE_PROVIDER=memcached \
+  -e CACHE_HOST=mcrouter \
+  -e CACHE_PORT=5000 \
+  -e CACHE_PROVIDER=memcached \
   ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
 ```
 
@@ -155,6 +157,16 @@ By default, the NGINX Rate Limiter Proxy listens on port `80`. However, this can
 For additional customization, such as caching specific URIs or adding other NGINX directives, you can mount a custom `custom.conf` file to: `/usr/local/openresty/nginx/conf/custom.conf` .
 
 This allows for flexible modifications and further optimizations based on your application's requirements.
+
+### ⚠️ Important: Avoid Using Redis Replicas for Rate Limiting
+
+Using Redis replicas for rate limiting is **not recommended** due to potential delays in data replication. Redis replication is **asynchronous**, meaning there can be a **lag** between the master and replica nodes. This can result in **inconsistent rate limits**, where some requests might pass even after exceeding the limit due to stale data in the replica.
+
+To ensure accurate and real-time enforcement of rate limits:
+- **Always use the Redis master instance** for both read and write operations related to rate limiting.
+- Replicas should only be used for **read-heavy** operations that are not time-sensitive.
+
+Using a replica for rate limiting can lead to bypassing rate limits and unexpected behaviors, defeating the purpose of traffic control.
 
 ### Request flow 
 

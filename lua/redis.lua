@@ -20,7 +20,7 @@ function _M.throttle(ngx, path, key, rule)
     local red = redis:new()
     red:set_timeout(50)
 
-    local ok, err = red:connect(os.getenv('DISTRIBUTED_CACHE_HOST'), tonumber(os.getenv('DISTRIBUTED_CACHE_PORT')))
+    local ok, err = red:connect(os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
     if not ok then
         ngx.log(ngx.ERR, "failed to connect to Redis: ", err)
         return false

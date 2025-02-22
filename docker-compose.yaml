@@ -3,9 +3,9 @@ services:
     environment:
       - UPSTREAM_HOST=127.0.0.1
       - UPSTREAM_PORT=9000
-      - DISTRIBUTED_CACHE_HOST=redis
-      - DISTRIBUTED_CACHE_PORT=6379
-      - DISTRIBUTED_CACHE_PROVIDER=redis
+      - CACHE_HOST=redis
+      - CACHE_PORT=6379
+      - CACHE_PROVIDER=redis
     build:
       context: .
       target: docker
