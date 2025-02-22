@@ -122,7 +122,6 @@ rules:
 > If `0.0.0.0/0` is specified in the rules, rate limiting will be **applied per IP** rather than globally.  
 > For example, if the limit is set to **10 requests per second (RPS)** and two clients—`127.0.0.1` and `127.0.0.2`—make requests, each IP will be allowed **10 RPS independently**.
 
----
 ### Environment Variables
 
 The following environment variables need to be set:
