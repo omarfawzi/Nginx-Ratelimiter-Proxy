@@ -36,7 +36,7 @@ function _M.throttle(ngx, path, key, rule)
         return false
     end
 
-    local ok, err = red:set_keepalive(10000, 50)
+    local ok, err = red:set_keepalive(60000, 100)
     if not ok then
         ngx.log(ngx.ERR, "failed to set keepalive: ", err)
     end
