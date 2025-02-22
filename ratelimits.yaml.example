@@ -3,6 +3,8 @@ ignoredSegments:
     - admin
   ips:
     - 127.0.0.2
+  urls:
+    - /v1/ping
 
 rules:
   /:

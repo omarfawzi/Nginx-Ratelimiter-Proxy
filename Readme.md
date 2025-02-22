@@ -86,6 +86,8 @@ ignoredSegments:
       - admin
    ips:
       - 127.0.0.1
+   urls: 
+     - /v1/ping
 
 rules:
   /v1:
@@ -103,7 +105,7 @@ rules:
         limit: 30
         window: 60
 ```
-- `ignoredSegments`: Defines users and IPs for which rate limiting should be skipped. This is useful for administrative users or specific trusted IPs.
+- `ignoredSegments`: Defines users, IPs and URLs for which rate limiting should be skipped. This is useful for administrative users, urls or specific trusted IPs.
 - `rules`: Contains the rate limit rules for different URI paths.
 - `path`: The URI path to which the rate limit applies, to apply ratelimits for all paths you can provide `/` as a global path, for regex paths refer to https://github.com/openresty/lua-nginx-module?tab=readme-ov-file#ngxrematch.
 - `user/IP`: The user or IP address to which the rate limit applies.

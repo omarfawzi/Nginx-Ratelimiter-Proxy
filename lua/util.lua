@@ -7,9 +7,13 @@ local function extract_remote_user_from_authorization_header(header)
     return pos and string.sub(header, 1, pos - 1) or nil
 end
 
+function _M.matchPath(ngx, pattern, path)
+    return ngx.re.match(path, pattern)
+end
+
 function _M.find_path_rules(ngx, path, rules)
     for pattern, pathRules in pairs(rules) do
-        if pattern ~= GLOBAL_PATH and ngx.re.match(path, pattern) then
+        if pattern ~= GLOBAL_PATH and _M.matchPath(ngx, pattern, path) then
             return pathRules
         end
     end

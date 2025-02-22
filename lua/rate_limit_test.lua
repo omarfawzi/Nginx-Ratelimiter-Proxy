@@ -66,7 +66,7 @@ local function mock_ngx()
 end
 
 describe('Rate Limiting', function()
-    local ngx, cache, throttle_config, rules
+    local ngx, cache, rules
     local rate_limit
 
     before_each(function()
@@ -75,7 +75,6 @@ describe('Rate Limiting', function()
             get = function() return nil end,
             safe_add = function() return true end
         })
-        throttle_config = {}
         rules = {
             ['/v1'] = {
                 ips = { ['127.0.0.1'] = { limit = 10, window = 60 } },
@@ -104,7 +103,7 @@ describe('Rate Limiting', function()
         ngx.var.uri = '/v1'
         ngx.var.remote_addr = '127.0.0.1'
 
-        rate_limit.throttle(ngx, rules, {}, {}, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {}, {}, {}, cache)
 
         assert.stub(rate_limit.apply_rate_limiting).was.called(1)
     end)
@@ -113,7 +112,7 @@ describe('Rate Limiting', function()
         ngx.var.remote_user = 'test_user'
         ngx.var.uri = '/v1'
 
-        rate_limit.throttle(ngx, rules, {}, {}, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {}, {}, {}, cache)
 
         assert.spy(ngx.exit).was.called_with(ngx.HTTP_TOO_MANY_REQUESTS)
     end)
@@ -123,29 +122,35 @@ describe('Rate Limiting', function()
         ngx.var.remote_user = 'non_matching_user'
         ngx.var.remote_addr = '186.0.0.1'
 
-        rate_limit.throttle(ngx, rules, {}, {}, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {}, {}, {}, cache)
 
         assert.spy(ngx.exit).was_not_called()
     end)
 
     it('should not throttle ignored IPs', function()
-        local ignored_ips = {'127.0.0.1'}
 
         ngx.var.uri = '/v1'
         ngx.var.remote_addr = '127.0.0.1'
 
-        rate_limit.throttle(ngx, rules, ignored_ips, {}, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {'127.0.0.1'}, {}, {}, cache)
+
+        assert.spy(ngx.exit).was_not_called()
+    end)
+
+    it('should not throttle ignored URLs', function()
+        ngx.var.uri = '/v1/ping'
+        ngx.var.remote_addr = '127.0.0.1'
+
+        rate_limit.throttle(ngx, rules, {}, {}, {'/v1/ping'}, cache)
 
         assert.spy(ngx.exit).was_not_called()
     end)
 
     it('should not throttle ignored Users', function()
-        local ignored_users = {'ignored_user'}
-
         ngx.var.uri = '/v1'
         ngx.var.remote_user = 'ignored_user'
 
-        rate_limit.throttle(ngx, rules, {}, ignored_users, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {}, {'ignored_user'}, {}, cache)
 
         assert.spy(ngx.exit).was_not_called()
     end)
@@ -154,7 +159,7 @@ describe('Rate Limiting', function()
         ngx.var.uri = '/v3'
         ngx.var.remote_addr = '127.0.0.1'
 
-        rate_limit.throttle(ngx, rules, {}, {}, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {}, {}, {}, cache)
 
         assert.spy(ngx.exit).was_not_called()
     end)
@@ -164,7 +169,7 @@ describe('Rate Limiting', function()
 
         ngx.var.uri = '/v1'
         ngx.var.remote_addr = '127.0.0.1'
-        rate_limit.throttle(ngx, rules, {}, {}, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {}, {}, {}, cache)
 
         assert.spy(ngx.exit).was.called_with(ngx.HTTP_TOO_MANY_REQUESTS)
     end)
@@ -173,7 +178,7 @@ describe('Rate Limiting', function()
         ngx.var.uri = '/v2'
         ngx.var.remote_addr = '127.0.0.1'
 
-        rate_limit.throttle(ngx, rules, {}, {}, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {}, {}, {}, cache)
 
         assert.spy(ngx.exit).was.called_with(ngx.HTTP_TOO_MANY_REQUESTS)
     end)
@@ -187,7 +192,7 @@ describe('Rate Limiting', function()
         ngx.var.uri = '/v3'
         ngx.var.remote_addr = '127.0.0.1'
 
-        rate_limit.throttle(ngx, rules, {}, {}, cache, throttle_config)
+        rate_limit.throttle(ngx, rules, {}, {}, {}, cache)
 
         assert.spy(ngx.exit).was.called_with(ngx.HTTP_TOO_MANY_REQUESTS)
     end)

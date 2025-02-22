@@ -46,7 +46,7 @@ local function is_rate_limited(ngx, path, remote_ip, username, rules, cache)
     return false
 end
 
-local function is_ignored(ip, user, ignored_ips, ignored_users)
+local function is_ignored(ngx, ip, user, request_path, ignored_ips, ignored_users, ignored_urls)
     local ip_matcher = resty_ipmatcher.new(ignored_ips)
     if ip_matcher:match(ip) then
         return true
@@ -58,10 +58,16 @@ local function is_ignored(ip, user, ignored_ips, ignored_users)
         end
     end
 
+    for _, ignored_url in ipairs(ignored_urls) do
+        if util.matchPath(ngx, ignored_url, request_path) then
+            return true
+        end
+    end
+
     return false
 end
 
-function _M.throttle(ngx, rules, ignored_ips, ignored_users, cache)
+function _M.throttle(ngx, rules, ignored_ips, ignored_users, ignored_urls, cache)
     local remote_ip = util.get_real_ip(ngx)
     local username = util.get_remote_user(ngx)
     local request_path = ngx.var.uri
@@ -70,7 +76,7 @@ function _M.throttle(ngx, rules, ignored_ips, ignored_users, cache)
         return ngx.exit(ngx.HTTP_TOO_MANY_REQUESTS)
     end
 
-    if is_ignored(remote_ip, username, ignored_ips, ignored_users) then
+    if is_ignored(ngx, remote_ip, username, request_path, ignored_ips, ignored_users, ignored_urls) then
         return
     end
 
