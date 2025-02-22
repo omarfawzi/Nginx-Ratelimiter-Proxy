@@ -196,6 +196,7 @@ To ensure accurate and real-time enforcement of rate limits:
 
 Using a replica for rate limiting can lead to bypassing rate limits and unexpected behaviors, defeating the purpose of traffic control.
 
+---
 ### Request flow 
 
 ```mermaid
