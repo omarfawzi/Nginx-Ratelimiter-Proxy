@@ -74,6 +74,7 @@ graph TD
 5. **Main Application**: The request is processed by the main application if it passes the rate limiting check.
 6. **Response**: The main application's response travels back through the NGINX proxy to the client.
 
+---
 ## Configuration
 
 ### Rate Limit Rules
@@ -112,11 +113,16 @@ rules:
 - `limit`: The maximum number of requests allowed within the time window.
 - `window`: The time window in seconds during which the limit applies.
 
-> **if** `0.0.0.0/0` is specified this will apply rate limiting for all incoming ips but per ip, 
-> i.e suppose we have two ips `127.0.0.1` and `127.0.0.2` and rules are set to 10 rps each ip will be able to hit by 10 rps.
 
-> 🔹 You should mount your `ratelimits.yaml` to `/usr/local/openresty/nginx/lua/ratelimits.yaml`.
+> 🔹 **Configuration Note**:  
+> Ensure that your `ratelimits.yaml` file is mounted to:  
+> `/usr/local/openresty/nginx/lua/ratelimits.yaml`
+>
+> 🔹 **Global Rate Limiting (`0.0.0.0/0`)**:  
+> If `0.0.0.0/0` is specified in the rules, rate limiting will be **applied per IP** rather than globally.  
+> For example, if the limit is set to **10 requests per second (RPS)** and two clients—`127.0.0.1` and `127.0.0.2`—make requests, each IP will be allowed **10 RPS independently**.
 
+---
 ### Environment Variables
 
 The following environment variables need to be set:
@@ -134,7 +140,8 @@ The following environment variables need to be set:
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
-### Running the Proxy
+---
+## Running the Proxy
 
 To run the NGINX Rate Limiter Proxy using Docker, you need to mount the rate limit configuration file and set the required environment variables.
 
@@ -159,6 +166,26 @@ By default, the NGINX Rate Limiter Proxy listens on port `80`. However, this can
 For additional customization, such as caching specific URIs or adding other NGINX directives, you can mount a custom `custom.conf` file to: `/usr/local/openresty/nginx/conf/custom.conf` .
 
 This allows for flexible modifications and further optimizations based on your application's requirements.
+
+---
+## 🔹 Why Use Redis Over Memcached for Rate Limiting?
+
+When implementing **rate limiting**, Redis is generally preferred over Memcached due to its ability to handle atomic operations and structured data efficiently:
+
+#### ✅ Atomic Operations
+Redis provides **atomic increment (`INCR`) and expiration (`EXPIRE`)** commands, ensuring **race-condition-free** updates. Memcached lacks built-in atomic counters with expiration, making it less reliable for rate limiting.
+
+#### ✅ Sliding Window Algorithm Support
+Redis **sorted sets (`ZADD`, `ZREMRANGEBYSCORE`)** allow implementing **sliding window** rate limiting, which provides a **smoother request distribution** over time. Memcached does not support this functionality.
+
+#### ✅ Per-Key Expiration
+Redis allows **TTL (time-to-live)** per key, ensuring **automatic counter resets** without requiring external cleanup logic.
+
+#### ✅ Consistency & Accuracy
+Redis executes commands in a **single-threaded atomic manner**, preventing **race conditions** when multiple requests update the same counter.
+
+#### 🚀 Conclusion
+Redis provides **precise, reliable, and scalable rate limiting**, while Memcached **lacks the necessary atomicity and data structures** for advanced rate-limiting techniques.
 
 ### ⚠️ Important: Avoid Using Redis Replicas for Rate Limiting
 
