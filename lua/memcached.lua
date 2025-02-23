@@ -1,10 +1,8 @@
 local _M = {}
 local CACHE_THRESHOLD = 0.001
 
-function _M.throttle(ngx, path, key, rule, cache)
+function _M.throttle(ngx, cache_key, rule, cache)
     local global_throttle = require("resty.global_throttle")
-
-    local cache_key = path .. ":" .. key
 
     local throttle = global_throttle.new('local', rule.limit, rule.window, {
         provider = 'memcached',
@@ -24,13 +22,7 @@ function _M.throttle(ngx, path, key, rule, cache)
 
     if desired_delay then
         if desired_delay > CACHE_THRESHOLD then
-            local ok
-            ok, err = cache:safe_add(cache_key, true, desired_delay)
-            if not ok then
-                if err ~= "exists" then
-                    ngx.log(ngx.ERR, "failed to cache decision: ", err)
-                end
-            end
+            require('util').add_to_local_cache(ngx, cache, cache_key, 1, desired_delay)
         end
         return true
     end

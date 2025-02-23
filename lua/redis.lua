@@ -29,13 +29,15 @@ function _M.connect(ngx, host, port)
     return red
 end
 
-function _M.throttle(ngx, path, key, rule)
+function _M.throttle(ngx, cache_key, rule)
+    if not os.getenv('CACHE_HOST') or not os.getenv('CACHE_PORT') then
+        return false
+    end
+
     local red = _M.connect(ngx, os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
     if not red then
         return false
     end
-
-    local cache_key = path .. ":" .. key
     local max_requests = rule.limit
     local window = rule.window
 

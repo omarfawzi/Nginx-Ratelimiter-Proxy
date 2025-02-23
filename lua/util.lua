@@ -34,6 +34,15 @@ function _M.get_real_ip(ngx)
     return ngx.var.remote_addr
 end
 
+function _M.add_to_local_cache(ngx, cache, cache_key, value, exptime)
+    local ok, err = cache:safe_add(cache_key, value, exptime)
+    if not ok then
+        if err ~= "exists" then
+            ngx.log(ngx.ERR, "failed to cache decision: ", err)
+        end
+    end
+end
+
 function _M.get_remote_user(ngx)
     if ngx.var.remote_user then
         return ngx.var.remote_user
