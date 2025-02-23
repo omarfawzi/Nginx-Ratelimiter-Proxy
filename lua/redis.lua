@@ -17,7 +17,8 @@ local SLIDING_WINDOW_SCRIPT = [[
 ]]
 
 function _M.connect(ngx, host, port)
-    local red = redis:new():set_timeout(50)
+    local red = redis:new()
+    red:set_timeout(50)
 
     local ok, err = red:connect(host, port)
     if not ok then
@@ -29,7 +30,7 @@ function _M.connect(ngx, host, port)
 end
 
 function _M.throttle(ngx, path, key, rule)
-    local red = _M.connect(os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
+    local red = _M.connect(ngx, os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
     if not red then
         return false
     end
