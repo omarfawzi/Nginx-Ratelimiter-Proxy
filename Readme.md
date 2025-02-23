@@ -156,15 +156,9 @@ docker run --rm --platform linux/amd64 \
   ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
 ```
 
-### Listening Port and Custom Configurations
+#### Custom Resolver
 
-By default, the NGINX Rate Limiter Proxy listens on port `80`. However, this can be overridden by mounting a custom `listen.conf` file to the following path:`/usr/local/openresty/nginx/conf/listen.conf` .
-
-#### Custom Logic and Caching
-
-For additional customization, such as caching specific URIs or adding other NGINX directives, you can mount a custom `custom.conf` file to: `/usr/local/openresty/nginx/conf/custom.conf` .
-
-This allows for flexible modifications and further optimizations based on your application's requirements.
+For additional customization, you can mount your own `resolver.conf` file to: `/usr/local/openresty/nginx/conf/resolver.conf` .
 
 ---
 ## 🔹 Why Use Redis Over Memcached for Rate Limiting?

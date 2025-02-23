@@ -14,7 +14,8 @@ services:
     volumes:
       - ${PWD}/ratelimits.yaml:/usr/local/openresty/nginx/lua/ratelimits.yaml
       - ${PWD}/lua:/usr/local/openresty/nginx/lua
-      - ${PWD}/nginx/nginx.docker.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ${PWD}/nginx/resolvers/docker.conf:/usr/local/openresty/nginx/conf/resolver.conf
+      - ${PWD}/nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
     depends_on:
       - redis
       - mcrouter
@@ -46,3 +47,15 @@ services:
     volumes:
       - ${PWD}/lua:/usr/local/openresty/nginx/lua
     command: busted --pattern=_test /usr/local/openresty/nginx/lua
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ${PWD}/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090" # Prometheus UI
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    depends_on:
+      - proxy
