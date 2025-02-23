@@ -16,13 +16,21 @@ local SLIDING_WINDOW_SCRIPT = [[
     return 1
 ]]
 
-function _M.throttle(ngx, path, key, rule)
-    local red = redis:new()
-    red:set_timeout(50)
+function _M.connect(ngx, host, port)
+    local red = redis:new():set_timeout(50)
 
-    local ok, err = red:connect(os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
+    local ok, err = red:connect(host, port)
     if not ok then
         ngx.log(ngx.ERR, "failed to connect to Redis: ", err)
+        return nil
+    end
+
+    return red
+end
+
+function _M.throttle(ngx, path, key, rule)
+    local red = _M.connect(os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
+    if not red then
         return false
     end
 
@@ -36,7 +44,7 @@ function _M.throttle(ngx, path, key, rule)
         return false
     end
 
-    local ok, err = red:set_keepalive(60000, 100)
+    local ok, err = red:set_keepalive(10000, 100)
     if not ok then
         ngx.log(ngx.ERR, "failed to set keepalive: ", err)
     end
