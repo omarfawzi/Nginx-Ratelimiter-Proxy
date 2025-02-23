@@ -20,7 +20,7 @@ This lightweight rate limiter serves as a **reverse proxy**, regulating incoming
 ```mermaid
 graph TD
    subgraph Infrastructure
-      B[Nginx Proxy] -- Rate Limit Check --> C{Store}
+      B[Nginx Proxy] -- Rate Limit Check --> C{Cache Provider}
       C -- 429 Too Many Requests --> B
 
       style B fill:#f9f,stroke:#333,stroke-width:2px
