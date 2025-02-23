@@ -158,7 +158,7 @@ docker run --rm --platform linux/amd64 \
 
 #### Custom Resolver
 
-For additional customization, you can mount your own `resolver.conf` file to: `/usr/local/openresty/nginx/conf/resolver.conf` .
+You can mount your own `resolver.conf` file to: `/usr/local/openresty/nginx/conf/resolver.conf` in order to use a custom resolver.
 
 ---
 ## 🔹 Why Use Redis Over Memcached for Rate Limiting?
