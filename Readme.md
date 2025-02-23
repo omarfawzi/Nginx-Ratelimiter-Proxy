@@ -133,8 +133,8 @@ The following environment variables need to be set:
 - `INDEX_FILE`: The default index file for FastCGI upstreams (e.g., `index.php`).
 - `SCRIPT_FILENAME`: The script filename for FastCGI upstreams (e.g., `/var/www/app/public/index.php`).
 - `UPSTREAM_PORT`: The port of the main application.
-- `CACHE_HOST`: The hostname of the distributed cache host.
-- `CACHE_PORT`: The port of the distributed cache port.
+- `CACHE_HOST`: The hostname of the distributed cache.
+- `CACHE_PORT`: The port of the distributed cache.
 - `CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
