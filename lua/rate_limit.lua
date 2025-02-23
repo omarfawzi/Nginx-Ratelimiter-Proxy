@@ -64,7 +64,7 @@ local function is_ignored(ngx, ip, user, request_path, ignored_ips, ignored_user
 
     for _, ignored_user in ipairs(ignored_users) do
         if user == ignored_user then
-            util.add_to_local_cache(ngx, cache, request_path .. ":" .. username, 2, nil)
+            util.add_to_local_cache(ngx, cache, request_path .. ":" .. user, 2, nil)
             return true
         end
     end
