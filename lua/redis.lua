@@ -50,9 +50,9 @@ function _M.throttle(ngx, cache_key, rule, cache)
     end
 
     if res == 1 then
-        local ttl, err = red:ttl(cache_key)
-        if ttl and ttl > CACHE_THRESHOLD then
-            require('util').add_to_local_cache(ngx, cache, cache_key, 1, ttl)
+        local ttl, err = red:pttl(cache_key)
+        if ttl and ttl/1000 > CACHE_THRESHOLD then
+            require('util').add_to_local_cache(ngx, cache, cache_key, 1, ttl/1000)
         elseif err then
             ngx.log(ngx.ERR, "failed to fetch TTL: ", err)
         end
