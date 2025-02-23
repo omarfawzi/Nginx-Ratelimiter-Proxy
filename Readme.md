@@ -221,7 +221,7 @@ graph TD
         ApplyGlobalIPRateLimit --> CheckLimit
     end
 
-    Start["Request Received"] --> CheckIgnore{Is IP or User Ignored?}
+    Start["Request Received"] --> CheckIgnore{Is IP/User/Url Ignored?}
     CheckIgnore -->|Yes| AllowRequest["Allow Request"]
     CheckIgnore -->|No| CheckIPRule
 
