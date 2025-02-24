@@ -225,9 +225,9 @@ This setup allows for easy customization by including additional **snippet** fil
 ### How It Works
 The Nginx configuration is designed to include external snippet files from the `/usr/local/openresty/nginx/conf/` directory:
 
-- **`http_snippet.conf`**: Modify http settings.
-- **`server_snippet.conf`**: Modify server-wide settings.
-- **`location_snippet.conf`**: Customize location-based routing and proxying.
+- **`http_snippet.conf`**: Modify http settings, applied to the http context.
+- **`server_snippet.conf`**: Modify server-wide settings, applied to the server context.
+- **`location_snippet.conf`**: Customize location-based routing and proxying, applied to the location context.
 - **`resolver.conf`**: Define custom DNS resolvers
 
 Nginx will automatically load these files if they exist.
