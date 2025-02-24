@@ -3,6 +3,34 @@
 
 # NGINX Rate Limiter Proxy
 
+## 📌 Table of Contents  
+
+- [Overview](#overview)  
+- [Key Features](#key-features)  
+- [Architecture](#architecture)  
+- [Interaction Flow](#interaction-flow)  
+  - [Client Request](#interaction-flow)  
+  - [NGINX Proxy](#interaction-flow)  
+  - [Rate Limiting](#interaction-flow)  
+  - [Decision-Making & Request Handling](#interaction-flow)  
+  - [Main Application](#interaction-flow)  
+  - [Response](#interaction-flow)  
+- [Configuration](#configuration)  
+  - [Rate Limit Rules](#rate-limit-rules)  
+  - [Environment Variables](#environment-variables)  
+- [Running the Proxy](#running-the-proxy)  
+  - [Docker Setup](#running-the-proxy)  
+  - [Custom Resolver](#running-the-proxy)  
+- [Why Use Redis Over Memcached?](#-why-use-redis-over-memcached-for-rate-limiting)  
+  - [Atomic Operations](#-why-use-redis-over-memcached-for-rate-limiting)  
+  - [Sliding Window Algorithm Support](#-why-use-redis-over-memcached-for-rate-limiting)  
+  - [Avoiding Redis Replicas](#-why-use-redis-over-memcached-for-rate-limiting)  
+- [Prometheus](#prometheus)  
+- [Request Flow](#request-flow)  
+  - [IP Rules](#request-flow)  
+  - [User Rules](#request-flow)  
+  - [Global Rules](#request-flow)  
+
 ## Overview
 
 This lightweight rate limiter serves as a **reverse proxy**, regulating incoming traffic and enforcing rate limits **before requests reach your backend**. By controlling excessive traffic and potential abuse, it enhances both security and performance.
@@ -74,7 +102,6 @@ graph TD
 5. **Main Application**: The request is processed by the main application if it passes the rate limiting check.
 6. **Response**: The main application's response travels back through the NGINX proxy to the client.
 
----
 ## Configuration
 
 ### Rate Limit Rules
@@ -139,7 +166,6 @@ The following environment variables need to be set:
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
----
 ## Running the Proxy
 
 To run the NGINX Rate Limiter Proxy using Docker, you need to mount the rate limit configuration file and set the required environment variables.
@@ -160,7 +186,6 @@ docker run --rm --platform linux/amd64 \
 
 You can mount your own `resolver.conf` file to: `/usr/local/openresty/nginx/conf/resolver.conf` in order to use a custom resolver.
 
----
 ## 🔹 Why Use Redis Over Memcached for Rate Limiting?
 
 When implementing **rate limiting**, Redis is generally preferred over Memcached due to its ability to handle atomic operations and structured data efficiently:
@@ -190,7 +215,6 @@ To ensure accurate and real-time enforcement of rate limits:
 
 Using a replica for rate limiting can lead to bypassing rate limits and unexpected behaviors, defeating the purpose of traffic control.
 
----
 ## Prometheus
 
 Prometheus metrics are exposed on port `9145` at the `/metrics` endpoint. This can be accessed via:
@@ -204,7 +228,6 @@ This endpoint provides various statistics, including:
 - `nginx_proxy_http_request_duration_seconds`: Histogram tracking request latency.
 - `nginx_proxy_http_connections`: Gauge tracking active connections (reading, writing, waiting).
 
----
 ### Request flow 
 
 ```mermaid
