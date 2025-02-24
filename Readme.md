@@ -191,6 +191,20 @@ To ensure accurate and real-time enforcement of rate limits:
 Using a replica for rate limiting can lead to bypassing rate limits and unexpected behaviors, defeating the purpose of traffic control.
 
 ---
+## Prometheus Metrics
+
+Prometheus metrics are exposed on port `9145` at the `/metrics` endpoint. This can be accessed via:
+
+```sh
+curl http://<server-ip>:9145/metrics
+```
+This endpoint provides various statistics, including:
+
+- `nginx_proxy_http_requests_total`: Total number of HTTP requests categorized by host and status.
+- `nginx_proxy_http_request_duration_seconds`: Histogram tracking request latency.
+- `nginx_proxy_http_connections`: Gauge tracking active connections (reading, writing, waiting).
+
+---
 ### Request flow 
 
 ```mermaid
