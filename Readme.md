@@ -26,6 +26,7 @@
   - [Sliding Window Algorithm Support](#-why-use-redis-over-memcached-for-rate-limiting)  
   - [Avoiding Redis Replicas](#-why-use-redis-over-memcached-for-rate-limiting)
 - [Extending Nginx Configuration with Snippets](#%EF%B8%8F-extending-nginx-configuration-with-snippets)
+  - [How It Works](#how-it-works) 
   - [How to Add Custom Snippets](#how-to-add-custom-snippets) 
 - [Prometheus](#prometheus)  
 - [Request Flow](#request-flow)  
@@ -221,20 +222,22 @@ Using a replica for rate limiting can lead to bypassing rate limits and unexpect
 
 This setup allows for easy customization by including additional **snippet** files. These snippets let you extend the core Nginx configuration without modifying `nginx.conf`.
 
-### **How It Works**
+### How It Works
 The Nginx configuration is designed to include external snippet files from the `/usr/local/openresty/nginx/conf/` directory:
 
-- **`server_snippet.conf`**: Modify server-wide settings
-- **`location_snippet.conf`**: Customize location-based routing and proxying
+- **`http_snippet.conf`**: Modify http settings.
+- **`server_snippet.conf`**: Modify server-wide settings.
+- **`location_snippet.conf`**: Customize location-based routing and proxying.
 - **`resolver.conf`**: Define custom DNS resolvers
 
 Nginx will automatically load these files if they exist.
 
-### **How to Add Custom Snippets**
+### How to Add Custom Snippets
 To extend the logic, create your snippet files and mount them into the container:
 
 ```sh
 docker run -d \
+  -v $(pwd)/snippets/http_snippet.conf:/usr/local/openresty/nginx/conf/http_snippet.conf \
   -v $(pwd)/snippets/server_snippet.conf:/usr/local/openresty/nginx/conf/server_snippet.conf \
   -v $(pwd)/snippets/location_snippet.conf:/usr/local/openresty/nginx/conf/location_snippet.conf \
   ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
