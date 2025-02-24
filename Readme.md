@@ -215,6 +215,29 @@ To ensure accurate and real-time enforcement of rate limits:
 
 Using a replica for rate limiting can lead to bypassing rate limits and unexpected behaviors, defeating the purpose of traffic control.
 
+## 🛠️ Extending Nginx Configuration with Snippets
+
+This setup allows for easy customization by including additional **snippet** files. These snippets let you extend the core Nginx configuration without modifying `nginx.conf`.
+
+### **How It Works**
+The Nginx configuration is designed to include external snippet files from the `/usr/local/openresty/nginx/conf/` directory:
+
+- **`server_snippet.conf`**: Modify server-wide settings
+- **`location_snippet.conf`**: Customize location-based routing and proxying
+- **`resolver.conf`**: Define custom DNS resolvers
+
+Nginx will automatically load these files if they exist.
+
+### **How to Add Custom Snippets**
+To extend the logic, create your snippet files and mount them into the container:
+
+```sh
+docker run -d \
+  -v $(pwd)/snippets/server_snippet.conf:/usr/local/openresty/nginx/conf/server_snippet.conf \
+  -v $(pwd)/snippets/location_snippet.conf:/usr/local/openresty/nginx/conf/location_snippet.conf \
+  ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
+```
+
 ## Prometheus
 
 Prometheus metrics are exposed on port `9145` at the `/metrics` endpoint. This can be accessed via:
