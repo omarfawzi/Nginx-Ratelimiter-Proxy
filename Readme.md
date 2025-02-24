@@ -191,7 +191,7 @@ To ensure accurate and real-time enforcement of rate limits:
 Using a replica for rate limiting can lead to bypassing rate limits and unexpected behaviors, defeating the purpose of traffic control.
 
 ---
-## Prometheus Metrics
+## Prometheus
 
 Prometheus metrics are exposed on port `9145` at the `/metrics` endpoint. This can be accessed via:
 
