@@ -14,7 +14,7 @@ services:
       - "8080:80"
     volumes:
       - ${PWD}/ratelimits.yaml:/usr/local/openresty/nginx/lua/ratelimits.yaml
-#      - ${PWD}/lua:/usr/local/openresty/nginx/lua
+      - ${PWD}/lua:/usr/local/openresty/nginx/lua
       - ${PWD}/nginx/resolvers/docker.conf:/usr/local/openresty/nginx/conf/resolver.conf
       - ${PWD}/nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
     depends_on:
