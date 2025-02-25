@@ -29,12 +29,11 @@ local TOKEN_BUCKET_SCRIPT = [[
 ]]
 
 function _M.throttle(red, ngx, cache_key, rule)
-    local capacity = rule.capacity
-    local refill_rate = rule.refill_rate
-    local request_tokens = rule.request_tokens or 1
-    local ttl = rule.ttl or capacity / refill_rate
+    local capacity = rule.limit
+    local refill_rate = rule.limit / rule.window
+    local ttl = rule.window
 
-    local res, err = red:eval(TOKEN_BUCKET_SCRIPT, 1, cache_key, capacity, refill_rate, request_tokens, ttl)
+    local res, err = red:eval(TOKEN_BUCKET_SCRIPT, 1, cache_key, capacity, refill_rate, 1, ttl)
     if not res then
         ngx.log(ngx.ERR, "Token Bucket script failed: ", err)
         return false

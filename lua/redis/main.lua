@@ -19,9 +19,17 @@ function _M.throttle(ngx, cache_key, rule)
     local red = _M.connect(ngx, os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
     if not red then return false end
 
-    local algorithm = os.getenv('CACHE_ALGO') or 'fixed_window'
+    local algorithm = os.getenv('CACHE_ALGO')
 
-    return require("redis." .. algorithm).throttle(red, ngx, cache_key, rule)
+    if algorithm == 'token-bucket' then
+        return require('redis.token_bucket').throttle(red, ngx, cache_key, rule)
+    end
+
+    if algorithm == 'sliding-window' then
+        return require('redis.sliding_window').throttle(red, ngx, cache_key, rule)
+    end
+
+    return require('redis.fixed_window').throttle(red, ngx, cache_key, rule)
 end
 
 return _M
