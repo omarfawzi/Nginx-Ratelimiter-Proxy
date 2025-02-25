@@ -1,7 +1,6 @@
 local _M = {}
 
 local FIXED_WINDOW_SCRIPT = [[
-    local current_time = redis.call('TIME')[1]
     local counter = redis.call('GET', KEYS[1])
 
     if counter and tonumber(counter) >= tonumber(ARGV[1]) then
