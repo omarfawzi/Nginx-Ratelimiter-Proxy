@@ -19,7 +19,7 @@ function _M.throttle(ngx, cache_key, rule)
     local red = _M.connect(ngx, os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
     if not red then return false end
 
-    local algorithm = os.getenv('CACHE_ALGO')
+    local algorithm = os.getenv('CACHE_ALGO') or 'token-bucket'
 
     if algorithm == 'token-bucket' then
         return require('redis.token_bucket').throttle(red, ngx, cache_key, rule)

@@ -163,7 +163,7 @@ The following environment variables need to be set:
 - `CACHE_HOST`: The hostname of the distributed cache.
 - `CACHE_PORT`: The port of the distributed cache.
 - `CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
-- `CACHE_ALGO`: Specifies the rate-limiting algorithm to use. Options include `fixed_window`, `sliding_window`, or `token_bucket`. This setting is only applicable when using `redis`.
+- `CACHE_ALGO`: Specifies the rate-limiting algorithm to use. Options include `fixed-window`, `sliding-window`, or `token-bucket`, defaults to `token-bucket`. This setting is only applicable when using `redis`.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
