@@ -6,6 +6,7 @@ services:
       - CACHE_HOST=redis
       - CACHE_PORT=6379
       - CACHE_PROVIDER=redis
+      - CACHE_ALGO=token-bucket
     build:
       context: .
       target: docker

@@ -16,7 +16,7 @@ function _M.apply_rate_limiting(ngx, path, key, rule, cache)
     end
 
     if provider == 'redis' then
-        return require('redis').throttle(ngx, cache_key, rule)
+        return require('redis.main').throttle(ngx, cache_key, rule)
     end
 
     return false

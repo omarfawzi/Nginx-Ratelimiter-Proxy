@@ -21,7 +21,7 @@
   - [Custom Resolver](#running-the-proxy)  
 - [Why Use Redis Over Memcached?](#-why-use-redis-over-memcached-for-rate-limiting)  
   - [Atomic Operations](#-why-use-redis-over-memcached-for-rate-limiting)  
-  - [Sliding Window Algorithm Support](#-why-use-redis-over-memcached-for-rate-limiting)  
+  - [Support for Different Algorithms](#-why-use-redis-over-memcached-for-rate-limiting)  
   - [Avoiding Redis Replicas](#-why-use-redis-over-memcached-for-rate-limiting)
 - [Extending Nginx Configuration with Snippets](#%EF%B8%8F-extending-nginx-configuration-with-snippets)
   - [How It Works](#how-it-works) 
@@ -42,7 +42,6 @@ This lightweight rate limiter serves as a **reverse proxy**, regulating incoming
 - **NGINX + Lua**: Implemented using **Lua scripting within NGINX**, leveraging `lua-resty-global-throttle` and `lua-resty-redis`.
 - **Flexible Caching**: Supports both **Redis** and **Memcached** as distributed caching providers.
 - **Configurable Rules**: Rate limit rules are **defined in a YAML file**, allowing for flexible and dynamic configurations.
-- **Sliding Window Algorithm**: Uses a **sliding window rate-limiting algorithm** for both caching providers, ensuring fair and efficient traffic control.
 
 ## Architecture
 
@@ -164,6 +163,7 @@ The following environment variables need to be set:
 - `CACHE_HOST`: The hostname of the distributed cache.
 - `CACHE_PORT`: The port of the distributed cache.
 - `CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
+- `CACHE_ALGO`: Specifies the rate-limiting algorithm to use. Options include `fixed_window`, `sliding_window`, or `token_bucket`. This setting is only applicable when using `redis`.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
@@ -194,8 +194,8 @@ When implementing **rate limiting**, Redis is generally preferred over Memcached
 #### ✅ Atomic Operations
 Redis provides **atomic increment (`INCR`) and expiration (`EXPIRE`)** commands, ensuring **race-condition-free** updates. Memcached lacks built-in atomic counters with expiration, making it less reliable for rate limiting.
 
-#### ✅ Sliding Window Algorithm Support
-Redis **sorted sets (`ZADD`, `ZREMRANGEBYSCORE`)** allow implementing **sliding window** rate limiting, which provides a **smoother request distribution** over time. Memcached does not support this functionality.
+#### ✅ Support for Different Algorithms
+Supports multiple rate-limiting algorithms, including fixed window, sliding window, and token bucket.
 
 #### ✅ Per-Key Expiration
 Redis allows **TTL (time-to-live)** per key, ensuring **automatic counter resets** without requiring external cleanup logic.
