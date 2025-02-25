@@ -1,6 +1,5 @@
 local _M = {}
 local redis = require("resty.redis")
-local CACHE_THRESHOLD = 0.001
 
 -- reference: https://redis.io/learn/develop/dotnet/aspnetcore/rate-limiting/sliding-window
 local SLIDING_WINDOW_SCRIPT = [[
@@ -47,15 +46,6 @@ function _M.throttle(ngx, cache_key, rule, cache)
     if not res then
         ngx.log(ngx.ERR, "failed to execute rate limiting script: ", err)
         return false
-    end
-
-    if res == 1 then
-        local ttl, err = red:pttl(cache_key)
-        if ttl and ttl/1000 > CACHE_THRESHOLD then
-            require('util').add_to_local_cache(ngx, cache, cache_key, 1, ttl/1000)
-        elseif err then
-            ngx.log(ngx.ERR, "failed to fetch TTL: ", err)
-        end
     end
 
     local ok, err = red:set_keepalive(10000, 100)
