@@ -2,6 +2,13 @@ local _M = {}
 
 local redis = require("resty.redis")
 
+local ALGORITHMS = {
+    ['token-bucket'] = 'redis.token_bucket',
+    ['sliding-window'] = 'redis.sliding_window',
+    ['leaky-bucket'] = 'redis.leaky_bucket',
+    ['fixed-window'] = 'redis.fixed_window'
+}
+
 function _M.connect(ngx, host, port)
     local red = redis:new()
     red:set_timeout(50)
@@ -15,21 +22,16 @@ function _M.connect(ngx, host, port)
     return red
 end
 
+
 function _M.throttle(ngx, cache_key, rule)
     local red = _M.connect(ngx, os.getenv('CACHE_HOST'), tonumber(os.getenv('CACHE_PORT')))
     if not red then return false end
 
     local algorithm = os.getenv('CACHE_ALGO') or 'token-bucket'
 
-    if algorithm == 'token-bucket' then
-        return require('redis.token_bucket').throttle(red, ngx, cache_key, rule)
-    end
+    local module = require(ALGORITHMS[algorithm] or ALGORITHMS['fixed-window'])
 
-    if algorithm == 'sliding-window' then
-        return require('redis.sliding_window').throttle(red, ngx, cache_key, rule)
-    end
-
-    return require('redis.fixed_window').throttle(red, ngx, cache_key, rule)
+    return module.throttle(red, ngx, cache_key, rule)
 end
 
 return _M
