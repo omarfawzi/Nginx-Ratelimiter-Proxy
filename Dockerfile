@@ -9,7 +9,7 @@ RUN /usr/local/openresty/luajit/bin/luarocks install lua-resty-ipmatcher && \
     /usr/local/openresty/luajit/bin/luarocks install nginx-lua-prometheus
 
 WORKDIR /usr/local/openresty/nginx/lua
-COPY lua/* .
+COPY lua/ .
 
 FROM base AS test
 RUN /usr/local/openresty/luajit/bin/luarocks install busted && \
