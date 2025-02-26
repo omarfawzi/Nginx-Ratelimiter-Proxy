@@ -37,7 +37,7 @@ local function is_rate_limited(ngx, path, remote_ip, username, rules, cache)
     if remote_ip and path_rules['ips'] then
         local ip_matcher = resty_ipmatcher.new(util.extract_ips(path_rules['ips']))
         if ip_matcher and ip_matcher:match(remote_ip) then
-            return _M.apply_rate_limiting(ngx, path, remote_ip, path_rules['ips'][ip_matcher:match(remote_ip)])
+            return _M.apply_rate_limiting(ngx, path, remote_ip, path_rules['ips'][ip_matcher:match(remote_ip)], cache)
         end
     end
 
