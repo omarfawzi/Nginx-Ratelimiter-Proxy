@@ -206,7 +206,7 @@ Redis executes commands in a **single-threaded atomic manner**, preventing **rac
 #### 🚀 Conclusion
 Redis provides **precise, reliable, and scalable rate limiting**, while Memcached **lacks the necessary atomicity and data structures** for advanced rate-limiting techniques.
 
-### ⚠️ Important: Avoid Using Redis Replicas for Rate Limiting
+#### ⚠️ Important: Avoid Using Redis Replicas for Rate Limiting
 
 Using Redis replicas for rate limiting is **not recommended** due to potential delays in data replication. Redis replication is **asynchronous**, meaning there can be a **lag** between the master and replica nodes. This can result in **inconsistent rate limits**, where some requests might pass even after exceeding the limit due to stale data in the replica.
 
