@@ -192,7 +192,7 @@ You can mount your own `resolver.conf` file to: `/usr/local/openresty/nginx/conf
 When implementing **rate limiting**, Redis is generally preferred over Memcached due to its ability to handle atomic operations and structured data efficiently:
 
 #### ✅ Atomic Operations
-Redis provides **atomic increment (`INCR`) and expiration (`EXPIRE`)** commands, ensuring **race-condition-free** updates. Memcached lacks built-in atomic counters with expiration, making it less reliable for rate limiting.
+Redis eval commands ensures **race-condition-free** updates. Memcached lacks built-in atomic counters with expiration, making it less reliable for rate limiting.
 
 #### ✅ Support for Different Algorithms
 Supports multiple rate-limiting algorithms, including fixed window, sliding window, and token bucket.
