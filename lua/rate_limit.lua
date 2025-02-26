@@ -12,7 +12,7 @@ function _M.apply_rate_limiting(ngx, path, key, rule, cache)
     local cache_key = path .. ":" .. key
 
     if provider == 'memcached' then
-        return require('memcached').throttle(ngx, cache_key, rule, cache)
+        return require('memcached.main').throttle(ngx, cache_key, rule, cache)
     end
 
     if provider == 'redis' then

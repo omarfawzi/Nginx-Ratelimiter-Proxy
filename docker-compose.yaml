@@ -47,7 +47,10 @@ services:
       target: test
     volumes:
       - ${PWD}/lua:/usr/local/openresty/nginx/lua
-    command: busted --pattern=_test /usr/local/openresty/nginx/lua
+      - ${PWD}/coverage:/coverage
+    command: >
+      sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv luacov.report.out /coverage/coverage.out"
+  
 
   prometheus:
     image: prom/prometheus:latest

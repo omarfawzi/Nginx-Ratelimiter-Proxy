@@ -7,11 +7,12 @@ return {
   ["reportfile"] = "luacov.report.out",
 
   ["include"] = {
-    "usr/local/openresty/nginx/lua/.*"
+    "usr/local/openresty/nginx/lua/"
   },
 
   ["exclude"] = {
-    "usr/local/openresty/luajit/.*"
+    "usr/local/openresty/luajit/.*",
+    "usr/local/openresty/nginx/lua/tests/"
   },
 
 }

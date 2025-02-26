@@ -1,2 +1,4 @@
 .idea
 ratelimits.yaml
+coverage
+lua/luacov.stats.out
