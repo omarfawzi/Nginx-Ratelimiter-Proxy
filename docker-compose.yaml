@@ -7,6 +7,7 @@ services:
       - CACHE_PORT=6379
       - CACHE_PROVIDER=redis
       - CACHE_ALGO=token-bucket
+      - PROMETHEUS_METRICS_ENABLED=true
     build:
       context: .
       target: docker

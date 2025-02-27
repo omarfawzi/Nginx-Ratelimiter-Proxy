@@ -164,6 +164,7 @@ The following environment variables need to be set:
 - `CACHE_PORT`: The port of the distributed cache.
 - `CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
 - `CACHE_ALGO`: Specifies the rate-limiting algorithm to use. Options include `leaky-bucket`, `fixed-window`, `sliding-window` or `token-bucket`, defaults to `token-bucket`. This setting is only applicable when using `redis`.
+- `PROMETHEUS_METRICS_ENABLED`: Allow exporting prometheus metrics, defaults to `false`.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
 
@@ -242,6 +243,9 @@ docker run -d \
 ```
 
 ## Prometheus
+
+### Prerequisite
+- Set `PROMETHEUS_METRICS_ENABLED` to `true`.
 
 Prometheus metrics are exposed on port `9145` at the `/metrics` endpoint. This can be accessed via:
 
