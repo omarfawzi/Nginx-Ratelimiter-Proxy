@@ -27,11 +27,7 @@
   - [How It Works](#how-it-works) 
   - [How to Add Custom Snippets](#how-to-add-custom-snippets) 
 - [Prometheus](#prometheus)  
-- [Request Flow](#request-flow)  
-  - [IP Rules](#request-flow)  
-  - [User Rules](#request-flow)  
-  - [Global Rules](#request-flow)  
-
+- [Request Flow](#request-flow)
 ## Overview
 
 This **distributed** lightweight rate limiter serves as a **reverse proxy**, regulating incoming traffic and enforcing rate limits **before requests reach your backend**. By controlling excessive traffic and potential abuse, it enhances both security and performance.
