@@ -91,6 +91,8 @@ describe('Rate Limiting', function()
         rate_limit = require("rate_limit")
 
         stub(rate_limit, 'apply_rate_limiting', true)
+
+        stub(os, 'getenv').returns('remote_addr')
     end)
 
     after_each(function()

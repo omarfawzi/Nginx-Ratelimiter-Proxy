@@ -18,8 +18,17 @@ local ngx_mock = {
 }
 
 local util = require('util')
+local os = require("os")
+local stub = require('luassert.stub')
 
 describe("Utilities", function()
+    before_each(function()
+        stub(os, 'getenv').returns('remote_addr')
+    end)
+
+    local function set_real_ip(ip_key, ip_value)
+        stub(os, 'getenv').returns(ip_key)
+    end
 
     it("should extract remote user from Authorization header", function()
         local result = util.get_remote_user({
@@ -39,6 +48,7 @@ describe("Utilities", function()
     end)
 
     it("should return correct real IP from CF-Connecting-IP header", function()
+        set_real_ip('http_cf_connecting_ip', '203.0.113.1')
         ngx_mock.var.http_cf_connecting_ip = '203.0.113.1'
         local result = util.get_real_ip(ngx_mock)
         assert.are.equal(result, '203.0.113.1')
@@ -46,6 +56,7 @@ describe("Utilities", function()
     end)
 
     it("should return correct real IP from X-Forwarded-For header", function()
+        set_real_ip('http_x_forwarded_for', '198.51.100.1, 198.51.100.2')
         ngx_mock.var.http_x_forwarded_for = '198.51.100.1, 198.51.100.2'
         local result = util.get_real_ip(ngx_mock)
         assert.are.equal(result, '198.51.100.1')
@@ -53,6 +64,7 @@ describe("Utilities", function()
     end)
 
     it("should return remote_addr if no other headers are present", function()
+        set_real_ip('remote_addr', '192.168.1.1')
         local result = util.get_real_ip(ngx_mock)
         assert.are.equal(result, '192.168.1.1')
     end)
