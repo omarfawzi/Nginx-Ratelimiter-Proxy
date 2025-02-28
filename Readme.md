@@ -138,8 +138,7 @@ rules:
 
 
 > 🔹 **Configuration Note**:  
-> Ensure that your `ratelimits.yaml` file is mounted to:  
-> `/usr/local/openresty/nginx/lua/ratelimits.yaml`
+> Ensure that your `ratelimits.yaml` file is mounted to: `/usr/local/openresty/nginx/lua/ratelimits.yaml`
 >
 > 🔹 **Global Rate Limiting (`0.0.0.0/0`)**:  
 > If `0.0.0.0/0` is specified in the rules, rate limiting will be **applied per IP** rather than globally.  
