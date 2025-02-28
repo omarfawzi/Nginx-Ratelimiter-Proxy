@@ -26,7 +26,7 @@ describe("Utilities", function()
         stub(os, 'getenv').returns('remote_addr')
     end)
 
-    local function set_real_ip(ip_key, ip_value)
+    local function set_real_ip(ip_key)
         stub(os, 'getenv').returns(ip_key)
     end
 

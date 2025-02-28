@@ -92,7 +92,15 @@ describe('Rate Limiting', function()
 
         stub(rate_limit, 'apply_rate_limiting', true)
 
-        stub(os, 'getenv').returns('remote_addr')
+        local original_getenv = os.getenv
+
+        stub(os, 'getenv', function(var)
+            if var == 'REMOTE_IP_KEY' then
+                return 'remote_addr'
+            else
+                return original_getenv(var)
+            end
+        end)
     end)
 
     after_each(function()
