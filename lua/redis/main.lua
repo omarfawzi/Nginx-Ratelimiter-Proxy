@@ -31,9 +31,7 @@ function _M.throttle(ngx, cache_key, rule)
 
     local module = require(ALGORITHMS[algorithm] or ALGORITHMS['fixed-window'])
 
-    local cluster_safe_key = "{rate_limit}:" .. cache_key
-
-    return module.throttle(red, ngx, cluster_safe_key, rule)
+    return module.throttle(red, ngx, cache_key, rule)
 end
 
 return _M

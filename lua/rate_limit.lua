@@ -9,7 +9,7 @@ local GLOBAL_PATH = '/'
 function _M.apply_rate_limiting(ngx, path, key, rule, cache)
     local provider = os.getenv('CACHE_PROVIDER') or 'memcached'
 
-    local cache_key = path .. ":" .. key
+    local cache_key = util.build_cache_key(path .. ":" .. key)
 
     if provider == 'memcached' then
         return require('memcached.main').throttle(ngx, cache_key, rule, cache)
@@ -49,29 +49,29 @@ local function is_rate_limited(ngx, path, remote_ip, username, rules, cache)
 end
 
 local function is_ignored(ngx, ip, user, request_path, ignored_ips, ignored_users, ignored_urls, cache)
-    if (ip and cache:get(request_path .. ":" .. ip) == 2) or
-       (user and cache:get(request_path .. ":" .. user) == 2) or
-        cache:get(request_path) == 2
+    if (ip and cache:get(util.build_cache_key(request_path .. ":" .. ip)) == 2) or
+       (user and cache:get(util.build_cache_key(request_path .. ":" .. user)) == 2) or
+        cache:get(util.build_cache_key(request_path)) == 2
     then
         return true
     end
 
     local ip_matcher = resty_ipmatcher.new(ignored_ips)
     if ip_matcher:match(ip) then
-        util.add_to_local_cache(ngx, cache, request_path .. ":" .. ip, 2, nil)
+        util.add_to_local_cache(ngx, cache, util.build_cache_key(request_path .. ":" .. ip), 2, nil)
         return true
     end
 
     for _, ignored_user in ipairs(ignored_users) do
         if user == ignored_user then
-            util.add_to_local_cache(ngx, cache, request_path .. ":" .. user, 2, nil)
+            util.add_to_local_cache(ngx, cache, util.build_cache_key(request_path .. ":" .. user), 2, nil)
             return true
         end
     end
 
     for _, ignored_url in ipairs(ignored_urls) do
         if util.matchPath(ngx, ignored_url, request_path) then
-            util.add_to_local_cache(ngx, cache, request_path, 2, nil)
+            util.add_to_local_cache(ngx, cache, util.build_cache_key(request_path), 2, nil)
             return true
         end
     end
@@ -84,8 +84,7 @@ function _M.throttle(ngx, rules, ignored_ips, ignored_users, ignored_urls, cache
     local username = util.get_remote_user(ngx)
     local request_path = ngx.var.uri
 
-    -- its already ratelimited
-    if (remote_ip and cache:get(request_path .. ":" .. remote_ip) == 1) or (username and cache:get(request_path .. ":" .. username) == 1) then
+    if (remote_ip and cache:get(util.build_cache_key(request_path .. ":" .. remote_ip)) == 1) or (username and cache:get(util.build_cache_key(request_path .. ":" .. username)) == 1) then
         return ngx.exit(ngx.HTTP_TOO_MANY_REQUESTS)
     end
 

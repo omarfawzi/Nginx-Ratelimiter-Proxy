@@ -159,6 +159,7 @@ The following environment variables need to be set:
 - `CACHE_HOST`: The hostname of the distributed cache.
 - `CACHE_PORT`: The port of the distributed cache.
 - `CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
+- `CACHE_PREFIX`: A unique cache prefix per server group / namespace that would reflect the context where ratelimits should be applied over.
 - `CACHE_ALGO`: Specifies the rate-limiting algorithm to use. Options include `leaky-bucket`, `fixed-window`, `sliding-window` or `token-bucket`, defaults to `token-bucket`. This setting is only applicable when using `redis`.
 - `PROMETHEUS_METRICS_ENABLED`: Allow exporting prometheus metrics, defaults to `false`.
 

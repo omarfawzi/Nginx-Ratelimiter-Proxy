@@ -3,6 +3,7 @@ services:
     environment:
       - UPSTREAM_HOST=127.0.0.1
       - UPSTREAM_PORT=9000
+      - CACHE_PREFIX=local
       - CACHE_HOST=redis
       - CACHE_PORT=6379
       - CACHE_PROVIDER=redis
