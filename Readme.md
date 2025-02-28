@@ -252,7 +252,7 @@ This endpoint provides various statistics, including:
 
 - `nginx_proxy_http_requests_total`: Total number of HTTP requests categorized by host and status.
 - `nginx_proxy_http_request_duration_seconds`: Histogram tracking request latency.
-- `nginx_proxy_http_connections`: Gauge tracking active connections (reading, writing, waiting).
+- `nginx_proxy_http_connections`: Gauge tracking active connections (reading, writing, waiting, active).
 
 ### Request flow 
 
