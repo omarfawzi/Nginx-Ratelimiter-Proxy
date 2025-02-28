@@ -1,28 +1,32 @@
 local _M = {}
 
 local LEAKY_BUCKET_SCRIPT = [[
-    local current_time = redis.call('TIME')[1]
-    local last_time = redis.call('HGET', KEYS[1], 'last_time') or current_time
-    local water_level = redis.call('HGET', KEYS[1], 'water_level') or 0
+    local current_time = tonumber(redis.call('TIME')[1])
 
-    last_time = tonumber(last_time)
-    water_level = tonumber(water_level)
+    local bucket_capacity = tonumber(ARGV[1])
+    local leak_rate = tonumber(ARGV[2])
+    local expiration = tonumber(ARGV[3])
+
+    local data = redis.call('HMGET', KEYS[1], 'last_time', 'water_level')
+    local last_time = tonumber(data[1]) or current_time
+    local water_level = tonumber(data[2]) or 0
 
     local elapsed_time = current_time - last_time
-    local leaked = elapsed_time * tonumber(ARGV[2])  -- Leak rate * elapsed time
-    water_level = math.max(0, water_level - leaked)  -- Water level cannot be negative
+    local leaked = elapsed_time * leak_rate
+    water_level = math.max(0, water_level - leaked)
 
-    if water_level + 1 > tonumber(ARGV[1]) then
+    if water_level + 1 > bucket_capacity then
         return 1
     end
 
     water_level = water_level + 1
-    redis.call('HSET', KEYS[1], 'water_level', water_level)
-    redis.call('HSET', KEYS[1], 'last_time', current_time)
-    redis.call('EXPIRE', KEYS[1], ARGV[3])  -- Expiration to avoid stale keys
+
+    redis.call('HMSET', KEYS[1], 'last_time', current_time, 'water_level', water_level)
+    redis.call('EXPIRE', KEYS[1], expiration)
 
     return 0
 ]]
+
 
 function _M.throttle(red, ngx, cache_key, rule)
     local bucket_capacity = rule.limit

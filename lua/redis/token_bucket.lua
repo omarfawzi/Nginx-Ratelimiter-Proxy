@@ -2,29 +2,30 @@ local _M = {}
 
 local TOKEN_BUCKET_SCRIPT = [[
     local bucket_key = KEYS[1]
-    local current_time = redis.call('TIME')[1]
-    local last_refill = redis.call('HGET', bucket_key, 'last_refill')
-    local tokens = redis.call('HGET', bucket_key, 'tokens')
+    local current_time = tonumber(redis.call('TIME')[1])
 
     local capacity = tonumber(ARGV[1])
     local refill_rate = tonumber(ARGV[2])
     local request_tokens = tonumber(ARGV[3])
+    local expiration = tonumber(ARGV[4])
 
-    if not last_refill then
-        last_refill = current_time
-        tokens = capacity
-    end
+    local data = redis.call('HMGET', bucket_key, 'last_refill', 'tokens')
+    local last_refill = tonumber(data[1]) or current_time
+    local tokens = tonumber(data[2]) or capacity
 
-    local elapsed_time = tonumber(current_time) - tonumber(last_refill)
+    -- Calculate new token count based on elapsed time
+    local elapsed_time = current_time - last_refill
     local new_tokens = math.min(capacity, tokens + (elapsed_time * refill_rate))
 
     if new_tokens < request_tokens then
-        return 1
+        return 1  -- Rate limit exceeded
     end
 
-    redis.call('HSET', bucket_key, 'tokens', new_tokens - request_tokens)
-    redis.call('HSET', bucket_key, 'last_refill', current_time)
-    redis.call('EXPIRE', bucket_key, ARGV[4])
+    new_tokens = new_tokens - request_tokens
+
+    redis.call('HMSET', bucket_key, 'tokens', new_tokens, 'last_refill', current_time)
+    redis.call('EXPIRE', bucket_key, expiration)
+
     return 0
 ]]
 
