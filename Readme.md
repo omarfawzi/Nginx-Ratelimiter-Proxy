@@ -160,10 +160,10 @@ The following environment variables need to be set:
 - `CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
 - `CACHE_PREFIX`: A unique cache prefix per server group / namespace that would reflect the context where ratelimits should be applied over.
 - `CACHE_ALGO`: Specifies the rate-limiting algorithm to use. Options include `leaky-bucket`, `fixed-window`, `sliding-window` or `token-bucket`, defaults to `token-bucket`. This setting is only applicable when using `redis`.
-- `REMOTE_IP_KEY`: This represents the environment variable used to determine which request variable should be considered as the source IP for rate limiting. The key helps define the priority of extracting the real client IP when multiple headers (e.g., X-Forwarded-For, CF-Connecting-IP, or remote_addr) are available. 
-  - If set to http_cf_connecting_ip, the system extracts the IP from the CF-Connecting-IP header (used by Cloudflare).
-  - If set to http_x_forwarded_for, it uses the first IP in the X-Forwarded-For header.
-  - If set to remote_addr, it directly uses the IP from ngx.var.remote_addr (default client IP provided by NGINX).
+- `REMOTE_IP_KEY`: This represents the environment variable used to determine which request variable should be considered as the source IP for rate limiting. The key helps define the priority of extracting the real client IP when multiple headers (e.g., `X-Forwarded-For, CF-Connecting-IP, or remote_addr`) are available. 
+  - If set to `http_cf_connecting_ip`, the system extracts the IP from the `CF-Connecting-IP` header (used by Cloudflare).
+  - If set to `http_x_forwarded_for`, it uses the first IP in the `X-Forwarded-For` header.
+  - If set to `remote_addr`, it directly uses the IP from `ngx.var.remote_addr` (default client IP provided by NGINX).
 - `PROMETHEUS_METRICS_ENABLED`: Allow exporting prometheus metrics, defaults to `false`.
 
 > To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
