@@ -174,6 +174,8 @@ docker run --rm --platform linux/amd64 \
   -e CACHE_HOST=mcrouter \
   -e CACHE_PORT=5000 \
   -e CACHE_PROVIDER=memcached \
+  -e CACHE_PREFIX=local \
+  -e REMOTE_IP_KEY=remote_addr \
   ghcr.io/omarfawzi/nginx-ratelimiter-proxy:master
 ```
 
