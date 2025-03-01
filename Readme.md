@@ -146,27 +146,20 @@ rules:
 
 ### Environment Variables
 
-The following environment variables need to be set:
-
-- `UPSTREAM_HOST`: The hostname of the main application.
-- `UPSTREAM_TYPE`: The type of upstream server. Valid values are:
-   - `http`: For HTTP upstreams.
-   - `fastcgi`: For FastCGI upstreams.
-- `INDEX_FILE`: The default index file for FastCGI upstreams (e.g., `index.php`).
-- `SCRIPT_FILENAME`: The script filename for FastCGI upstreams (e.g., `/var/www/app/public/index.php`).
-- `UPSTREAM_PORT`: The port of the main application.
-- `CACHE_HOST`: The hostname of the distributed cache.
-- `CACHE_PORT`: The port of the distributed cache.
-- `CACHE_PROVIDER`: The provider of the distributed cache, either `redis` or `memcached`.
-- `CACHE_PREFIX`: A unique cache prefix per server group / namespace that would reflect the context where ratelimits should be applied over.
-- `CACHE_ALGO`: Specifies the rate-limiting algorithm to use. Options include `leaky-bucket`, `fixed-window`, `sliding-window` or `token-bucket`, defaults to `token-bucket`. This setting is only applicable when using `redis`.
-- `REMOTE_IP_KEY`: This represents the environment variable used to determine which request variable should be considered as the source IP for rate limiting. The key helps define the priority of extracting the real client IP when multiple headers (e.g., `X-Forwarded-For, CF-Connecting-IP, or remote_addr`) are available. 
-  - If set to `http_cf_connecting_ip`, the system extracts the IP from the `CF-Connecting-IP` header (used by Cloudflare).
-  - If set to `http_x_forwarded_for`, it uses the first IP in the `X-Forwarded-For` header.
-  - If set to `remote_addr`, it directly uses the IP from `ngx.var.remote_addr` (default client IP provided by NGINX).
-- `PROMETHEUS_METRICS_ENABLED`: Allow exporting prometheus metrics, defaults to `false`.
-
-> To enable either `FastCGI` or `HTTP` upstreams, set the `UPSTREAM_TYPE` environment variable to the desired value (`fastcgi` or `http`).
+|         | Description | Required | Default |
+|---------------------------|-------------|----------|---------|
+| `UPSTREAM_PORT`           | The port of the main application. | ✅ | - |
+| `UPSTREAM_HOST`           | The hostname of the main application. | ✅ | - |
+| `UPSTREAM_TYPE`           | The type of upstream server. Valid values: `http` (for HTTP upstreams) and `fastcgi` (for FastCGI upstreams). | ✅ | `http` |
+| `INDEX_FILE`              | The default index file for FastCGI upstreams. | ❌ | `index.php` |
+| `SCRIPT_FILENAME`         | The script filename for FastCGI upstreams. | ❌ | `/var/www/app/public/index.php` |
+| `CACHE_HOST`             | The hostname of the distributed cache. | ✅ | - |
+| `CACHE_PORT`             | The port of the distributed cache. | ✅ | - |
+| `CACHE_PROVIDER`         | The provider of the distributed cache, either `redis` or `memcached`. | ✅ | - |
+| `CACHE_PREFIX`          | A unique cache prefix per server group/namespace that reflects the context where rate limits should be applied. | ✅ | - |
+| `CACHE_ALGO`             | Specifies the rate-limiting algorithm to use. Options: `fixed-window`, `sliding-window`, `leaky-bucket`, or `token-bucket`. Only applicable when using `redis`. | ❌ | `token-bucket` |
+| `REMOTE_IP_KEY`          | Defines the request variable to use as the source IP for rate limiting. Options: <br> - `http_cf_connecting_ip`: Extracts IP from `CF-Connecting-IP` (Cloudflare). <br> - `http_x_forwarded_for`: Uses the first IP in `X-Forwarded-For` header. <br> - `remote_addr`: Uses `ngx.var.remote_addr` (default NGINX client IP). | ❌ | `remote_addr` |
+| `PROMETHEUS_METRICS_ENABLED` | Enables Prometheus metrics export. | ❌ | `false` |
 
 ## Running the Proxy
 
