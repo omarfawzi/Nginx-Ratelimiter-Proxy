@@ -146,20 +146,20 @@ rules:
 
 ### Environment Variables
 
-|         | Description | Required | Default |
-|---------------------------|-------------|----------|---------|
-| `UPSTREAM_PORT`           | The port of the main application. | ✅ | - |
-| `UPSTREAM_HOST`           | The hostname of the main application. | ✅ | - |
-| `UPSTREAM_TYPE`           | The type of upstream server. Valid values: `http` (for HTTP upstreams) and `fastcgi` (for FastCGI upstreams). | ✅ | `http` |
-| `INDEX_FILE`              | The default index file for FastCGI upstreams. | ❌ | `index.php` |
+|         | Description | Required | Default                         |
+|---------------------------|-------------|---------|---------------------------------|
+| `UPSTREAM_PORT`           | The port of the main application. | ✅ | -                               |
+| `UPSTREAM_HOST`           | The hostname of the main application. | ✅ | -                               |
+| `UPSTREAM_TYPE`           | The type of upstream server. Valid values: `http` (for HTTP upstreams) and `fastcgi` (for FastCGI upstreams). | ✅ | `http`                          |
+| `INDEX_FILE`              | The default index file for FastCGI upstreams. | ❌ | `index.php`                     |
 | `SCRIPT_FILENAME`         | The script filename for FastCGI upstreams. | ❌ | `/var/www/app/public/index.php` |
-| `CACHE_HOST`             | The hostname of the distributed cache. | ✅ | - |
-| `CACHE_PORT`             | The port of the distributed cache. | ✅ | - |
-| `CACHE_PROVIDER`         | The provider of the distributed cache, either `redis` or `memcached`. | ✅ | - |
-| `CACHE_PREFIX`          | A unique cache prefix per server group/namespace that reflects the context where rate limits should be applied. | ✅ | - |
-| `CACHE_ALGO`             | Specifies the rate-limiting algorithm to use. Options: `fixed-window`, `sliding-window`, `leaky-bucket`, or `token-bucket`. Only applicable when using `redis`. | ❌ | `token-bucket` |
-| `REMOTE_IP_KEY`          | Defines the request variable to use as the source IP for rate limiting. Options: <br> - `http_cf_connecting_ip`: Extracts IP from `CF-Connecting-IP` (Cloudflare). <br> - `http_x_forwarded_for`: Uses the first IP in `X-Forwarded-For` header. <br> - `remote_addr`: Uses `ngx.var.remote_addr` (default NGINX client IP). | ❌ | `remote_addr` |
-| `PROMETHEUS_METRICS_ENABLED` | Enables Prometheus metrics export. | ❌ | `false` |
+| `CACHE_HOST`             | The hostname of the distributed cache. | ✅ | -                               |
+| `CACHE_PORT`             | The port of the distributed cache. | ✅ | -                               |
+| `CACHE_PROVIDER`         | The provider of the distributed cache, either `redis` or `memcached`. | ✅ | -                               |
+| `CACHE_PREFIX`          | A unique cache prefix per server group/namespace that reflects the context where rate limits should be applied. | ✅ | -                               |
+| `CACHE_ALGO`             | Specifies the rate-limiting algorithm to use. Options: `fixed-window`, `sliding-window`, `leaky-bucket`, or `token-bucket`. Only applicable when using `redis`. | ❌ | `token-bucket`                  |
+| `REMOTE_IP_KEY`          | Defines the request variable to use as the source IP for rate limiting. Options: <br> - `http_cf_connecting_ip`: Extracts IP from `CF-Connecting-IP` (Cloudflare). <br> - `http_x_forwarded_for`: Uses the first IP in `X-Forwarded-For` header. <br> - `remote_addr`: Uses `ngx.var.remote_addr` (default NGINX client IP). | ✅ | -                               |
+| `PROMETHEUS_METRICS_ENABLED` | Enables Prometheus metrics export. | ❌ | `false`                         |
 
 ## Running the Proxy
 
