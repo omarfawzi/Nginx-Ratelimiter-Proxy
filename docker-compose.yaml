@@ -1,6 +1,7 @@
 services:
   proxy:
     environment:
+      - UPSTREAM_TYPE=fastcgi
       - UPSTREAM_HOST=127.0.0.1
       - UPSTREAM_PORT=9000
       - CACHE_PREFIX=local
