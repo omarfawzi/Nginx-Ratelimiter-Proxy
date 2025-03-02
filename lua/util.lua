@@ -22,7 +22,7 @@ end
 function _M.build_cache_key(cache_key)
     local cache_prefix = os.getenv('CACHE_PREFIX') or ''
 
-    return "{rate_limit}:" .. cache_prefix .. cache_key
+    return string.format("{rate_limit}:{%s}%s", cache_prefix, cache_key)
 end
 
 function _M.get_real_ip(ngx)
