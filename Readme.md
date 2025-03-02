@@ -216,7 +216,7 @@ Using a replica for rate limiting can lead to bypassing rate limits and unexpect
 This implementation is **Redis Cluster-safe** because:
 
 - It ensures that all keys used in rate limiting share the **same hash slot**, preventing cross-slot errors.
-- The rate limit keys are prefixed consistently with a `{}` hash tag, ensuring that Redis Cluster treats them as belonging to the same shard.
+- The provided `CACHE_PREFIX` are wrapped with `{}` hash tag, ensuring that Redis Cluster treats them as belonging to the same shard.
 
 ## 🛠️ Extending Nginx Configuration with Snippets
 
