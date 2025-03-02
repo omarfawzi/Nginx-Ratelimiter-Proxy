@@ -23,7 +23,6 @@
   - [Atomic Operations](#-atomic-operations)  
   - [Support for Different Algorithms](#-support-for-different-algorithms)  
   - [Avoiding Redis Replicas](#%EF%B8%8F-important-avoid-using-redis-replicas-for-rate-limiting)
-  - [Redis Cluster Compatability](#redis-cluster-compatibility)
 - [Extending Nginx Configuration with Snippets](#%EF%B8%8F-extending-nginx-configuration-with-snippets)
   - [How It Works](#how-it-works) 
   - [How to Add Custom Snippets](#how-to-add-custom-snippets) 
@@ -210,13 +209,6 @@ To ensure accurate and real-time enforcement of rate limits:
 - Replicas should only be used for **read-heavy** operations that are not time-sensitive.
 
 Using a replica for rate limiting can lead to bypassing rate limits and unexpected behaviors, defeating the purpose of traffic control.
-
-#### Redis Cluster Compatibility
-
-This implementation is **Redis Cluster-safe** because:
-
-- It ensures that all keys used in rate limiting share the **same hash slot**, preventing cross-slot errors.
-- The provided `CACHE_PREFIX` are wrapped with `{}` hash tag, ensuring that Redis Cluster treats them as belonging to the same shard.
 
 ## 🛠️ Extending Nginx Configuration with Snippets
 
