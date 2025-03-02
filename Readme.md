@@ -22,7 +22,7 @@
 - [Why Use Redis Over Memcached?](#-why-use-redis-over-memcached-for-rate-limiting)  
   - [Atomic Operations](#-atomic-operations)  
   - [Support for Different Algorithms](#-support-for-different-algorithms)  
-  - [Avoiding Redis Replicas](#-important-avoid-using-redis-replicas-for-rate-limiting)
+  - [Avoiding Redis Replicas](#%EF%B8%8F-important-avoid-using-redis-replicas-for-rate-limiting)
   - [Redis Cluster Compatability](#redis-cluster-compatibility)
 - [Extending Nginx Configuration with Snippets](#%EF%B8%8F-extending-nginx-configuration-with-snippets)
   - [How It Works](#how-it-works) 
@@ -197,12 +197,6 @@ Redis eval commands ensures **race-condition-free** updates. Memcached lacks bui
 
 #### ✅ Support for Different Algorithms
 Supports multiple rate-limiting algorithms, including fixed window, sliding window, and token bucket.
-
-#### ✅ Per-Key Expiration
-Redis allows **TTL (time-to-live)** per key, ensuring **automatic counter resets** without requiring external cleanup logic.
-
-#### ✅ Consistency & Accuracy
-Redis executes commands in a **single-threaded atomic manner**, preventing **race conditions** when multiple requests update the same counter.
 
 #### 🚀 Conclusion
 Redis provides **precise, reliable, and scalable rate limiting**, while Memcached **lacks the necessary atomicity and data structures** for advanced rate-limiting techniques.
