@@ -18,16 +18,18 @@
   - [Environment Variables](#environment-variables)  
 - [Running the Proxy](#running-the-proxy)  
   - [Docker Setup](#running-the-proxy)  
-  - [Custom Resolver](#running-the-proxy)  
+  - [Custom Resolver](#custom-resolver)  
 - [Why Use Redis Over Memcached?](#-why-use-redis-over-memcached-for-rate-limiting)  
-  - [Atomic Operations](#-why-use-redis-over-memcached-for-rate-limiting)  
-  - [Support for Different Algorithms](#-why-use-redis-over-memcached-for-rate-limiting)  
-  - [Avoiding Redis Replicas](#-why-use-redis-over-memcached-for-rate-limiting)
+  - [Atomic Operations](#-atomic-operations)  
+  - [Support for Different Algorithms](#-support-for-different-algorithms)  
+  - [Avoiding Redis Replicas](#-important-avoid-using-redis-replicas-for-rate-limiting)
+  - [Redis Cluster Compatability](#redis-cluster-compatibility)
 - [Extending Nginx Configuration with Snippets](#%EF%B8%8F-extending-nginx-configuration-with-snippets)
   - [How It Works](#how-it-works) 
   - [How to Add Custom Snippets](#how-to-add-custom-snippets) 
 - [Prometheus](#prometheus)  
 - [Request Flow](#request-flow)
+
 ## Overview
 
 This **distributed** lightweight rate limiter serves as a **reverse proxy**, regulating incoming traffic and enforcing rate limits **before requests reach your backend**. By controlling excessive traffic and potential abuse, it enhances both security and performance.
@@ -214,6 +216,13 @@ To ensure accurate and real-time enforcement of rate limits:
 - Replicas should only be used for **read-heavy** operations that are not time-sensitive.
 
 Using a replica for rate limiting can lead to bypassing rate limits and unexpected behaviors, defeating the purpose of traffic control.
+
+#### Redis Cluster Compatibility
+
+This implementation is **Redis Cluster-safe** because:
+
+- It ensures that all keys used in rate limiting share the **same hash slot**, preventing cross-slot errors.
+- The rate limit keys are prefixed consistently with a `{}` hash tag, ensuring that Redis Cluster treats them as belonging to the same shard.
 
 ## 🛠️ Extending Nginx Configuration with Snippets
 
