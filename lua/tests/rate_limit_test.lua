@@ -61,6 +61,16 @@ local function mock_ngx()
             match = function(path, pattern)
                 return string.match(path, pattern)
             end
+        },
+        shared = {
+            global_throttle_cache = {
+                get = function()
+                    return true
+                end,
+                safe_add = function()
+                    return true
+                end
+            }
         }
     }
 end

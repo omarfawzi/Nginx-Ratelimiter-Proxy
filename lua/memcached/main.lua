@@ -1,11 +1,13 @@
 local _M = {}
 local CACHE_THRESHOLD = 0.001
 
-function _M.throttle(ngx, cache_key, rule, cache)
+function _M.throttle(ngx, cache_key, rule)
     if not os.getenv('CACHE_HOST') or not os.getenv('CACHE_PORT') then
         ngx.log(ngx.ERR, "Failed to use cache provider, please set both CACHE_HOST and CACHE_PORT")
         return false
     end
+
+    local cache = ngx.shared.global_throttle_cache
 
     local global_throttle = require("resty.global_throttle")
 
