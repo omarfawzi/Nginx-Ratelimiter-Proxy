@@ -29,7 +29,12 @@ function _M.throttle(ngx, cache_key, rule)
 
     local algorithm = os.getenv('CACHE_ALGO') or 'token-bucket'
 
-    local module = require(ALGORITHMS[algorithm] or ALGORITHMS['fixed-window'])
+    if not ALGORITHMS[algorithm] then
+        ngx.log(ngx.ERR, "Rate-limiting algorithm not found: " .. algorithm)
+        return false
+    end
+
+    local module = require(ALGORITHMS[algorithm])
 
     return module.throttle(red, ngx, cache_key, rule)
 end
