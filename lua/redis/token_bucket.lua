@@ -31,7 +31,7 @@ local TOKEN_BUCKET_SCRIPT = [[
 
 function _M.throttle(red, ngx, cache_key, rule)
     local capacity = rule.limit
-    local refill_rate = rule.limit / rule.window
+    local refill_rate = rule.flowRate or rule.limit / rule.window
     local ttl = rule.window
 
     local script_sha = require('redis.main').get_cached_script(red, ngx, 'token_bucket_sha', TOKEN_BUCKET_SCRIPT)
