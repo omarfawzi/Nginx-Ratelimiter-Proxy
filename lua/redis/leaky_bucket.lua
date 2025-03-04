@@ -29,7 +29,7 @@ local LEAKY_BUCKET_SCRIPT = [[
 
 function _M.throttle(red, ngx, cache_key, rule)
     local bucket_capacity = rule.limit
-    local leak_rate = rule.flowRate or rule.limit / rule.window
+    local leak_rate = rule.flowRate or (rule.limit / rule.window)
     local expiration = rule.window
 
     local script_sha = require('redis.main').get_cached_script(red, ngx, 'leaky_bucket_sha', LEAKY_BUCKET_SCRIPT)
