@@ -137,7 +137,7 @@ rules:
 - `user/IP`: The user or IP address to which the rate limit applies.
 - `limit`: The maximum number of requests allowed within the time window.
 - `window`: The time window in seconds during which the limit applies.
-- `flowRate`: Specifies the rate at which requests are allowed, applicable to `leaky-bucket` (leak rate) and `token-bucket` (refill rate) algorithms. Defaults to `limit/window`.
+- `flowRate`: Specifies the rate at which requests are allowed in rps, applicable to `leaky-bucket` (leak rate) and `token-bucket` (refill rate) algorithms. Defaults to `limit/window`.
 
 > 🔹 **Configuration Note**:  
 > Ensure that your `ratelimits.yaml` file is mounted to: `/usr/local/openresty/nginx/lua/ratelimits.yaml`
