@@ -127,7 +127,7 @@ rules:
   ^/v2/[0-9]$:
     users:
       user3:
-        flowRate: 0.6
+        flowRate: 10
         limit: 30
         window: 60
 ```
