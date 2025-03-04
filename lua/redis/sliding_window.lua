@@ -19,6 +19,9 @@ function _M.throttle(red, ngx, cache_key, rule)
     local window = rule.window
 
     local script_sha = require('redis.main').get_cached_script(red, ngx, 'sliding_window_sha', SLIDING_WINDOW_SCRIPT)
+    if not script_sha then
+        return false
+    end
 
     local res, err = red:evalsha(script_sha, 1, cache_key, max_requests, window)
 

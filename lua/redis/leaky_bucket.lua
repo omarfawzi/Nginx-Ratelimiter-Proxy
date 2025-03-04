@@ -33,6 +33,9 @@ function _M.throttle(red, ngx, cache_key, rule)
     local expiration = rule.window
 
     local script_sha = require('redis.main').get_cached_script(red, ngx, 'leaky_bucket_sha', LEAKY_BUCKET_SCRIPT)
+    if not script_sha then
+        return false
+    end
 
     local res, err = red:evalsha(script_sha, 1, cache_key, bucket_capacity, leak_rate, expiration)
 
