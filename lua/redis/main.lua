@@ -9,6 +9,23 @@ local ALGORITHMS = {
     ['fixed-window'] = 'redis.fixed_window'
 }
 
+function _M.get_cached_script(red, ngx, script_name, script)
+    local redis_scripts_cache = ngx.shared.redis_scripts_cache
+    local script_sha = redis_scripts_cache:get(script_name)
+
+    if not script_sha then
+        local sha, err = red:script("load", script)
+        if not sha then
+            ngx.log(ngx.ERR, "Failed to load script into Redis: ", err)
+            return false
+        end
+        redis_scripts_cache:set("leaky_bucket_sha", sha)
+        script_sha = sha
+    end
+
+    return script_sha
+end
+
 function _M.connect(ngx, host, port)
     local red = redis:new()
     red:set_timeout(50)

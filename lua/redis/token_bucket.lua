@@ -34,9 +34,12 @@ function _M.throttle(red, ngx, cache_key, rule)
     local refill_rate = rule.limit / rule.window
     local ttl = rule.window
 
-    local res, err = red:eval(TOKEN_BUCKET_SCRIPT, 1, cache_key, capacity, refill_rate, 1, ttl)
+    local script_sha = require('redis.main').get_cached_script(red, ngx, 'token_bucket_sha', TOKEN_BUCKET_SCRIPT)
+
+    local res, err = red:evalsha(script_sha, 1, cache_key, capacity, refill_rate, 1, ttl)
+
     if not res then
-        ngx.log(ngx.ERR, "Token Bucket script failed: ", err)
+        ngx.log(ngx.ERR, "Token Bucket Rate Limit script execution failed: ", err)
         return false
     end
 

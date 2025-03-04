@@ -18,9 +18,12 @@ function _M.throttle(red, ngx, cache_key, rule)
     local max_requests = rule.limit
     local window = rule.window
 
-    local res, err = red:eval(SLIDING_WINDOW_SCRIPT, 1, cache_key, max_requests, window)
+    local script_sha = require('redis.main').get_cached_script(red, ngx, 'sliding_window_sha', SLIDING_WINDOW_SCRIPT)
+
+    local res, err = red:evalsha(script_sha, 1, cache_key, max_requests, window)
+
     if not res then
-        ngx.log(ngx.ERR, "Sliding Window Rate Limit script failed: ", err)
+        ngx.log(ngx.ERR, "Sliding Window Rate Limit script execution failed: ", err)
         return false
     end
 

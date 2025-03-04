@@ -8,7 +8,7 @@ services:
       - CACHE_HOST=redis
       - CACHE_PORT=6379
       - CACHE_PROVIDER=redis
-      - CACHE_ALGO=token-bucket
+      - CACHE_ALGO=fixed-window
       - REMOTE_IP_KEY=remote_addr
       - PROMETHEUS_METRICS_ENABLED=true
     build:
