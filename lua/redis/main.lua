@@ -19,7 +19,7 @@ function _M.get_cached_script(red, ngx, script_name, script)
             ngx.log(ngx.ERR, "Failed to load script into Redis: ", err)
             return false
         end
-        redis_scripts_cache:set("leaky_bucket_sha", sha)
+        redis_scripts_cache:set(script_name, sha)
         script_sha = sha
     end
 
