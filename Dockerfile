@@ -2,18 +2,25 @@ FROM openresty/openresty:alpine-fat AS base
 
 RUN apk add --no-cache git yaml-dev
 
-RUN /usr/local/openresty/luajit/bin/luarocks install lua-resty-ipmatcher && \
-    /usr/local/openresty/luajit/bin/luarocks install lua-resty-global-throttle && \
-    /usr/local/openresty/luajit/bin/luarocks install lyaml && \
-    /usr/local/openresty/luajit/bin/luarocks install lua-resty-redis && \
-    /usr/local/openresty/luajit/bin/luarocks install nginx-lua-prometheus
+RUN /usr/local/openresty/luajit/bin/luarocks install lua-resty-ipmatcher \
+        --server=https://luarocks.org/dev && \
+    /usr/local/openresty/luajit/bin/luarocks install lua-resty-global-throttle \
+        --server=https://luarocks.org/dev && \
+    /usr/local/openresty/luajit/bin/luarocks install lyaml \
+        --server=https://luarocks.org/dev && \
+    /usr/local/openresty/luajit/bin/luarocks install lua-resty-redis \
+        --server=https://luarocks.org/dev && \
+    /usr/local/openresty/luajit/bin/luarocks install nginx-lua-prometheus \
+        --server=https://luarocks.org/dev
 
 WORKDIR /usr/local/openresty/nginx/lua
 COPY lua/ .
 
 FROM base AS test
-RUN /usr/local/openresty/luajit/bin/luarocks install busted && \
-    /usr/local/openresty/luajit/bin/luarocks install luacov
+RUN /usr/local/openresty/luajit/bin/luarocks install busted \
+        --server=https://luarocks.org/dev && \
+    /usr/local/openresty/luajit/bin/luarocks install luacov \
+        --server=https://luarocks.org/dev
 
 FROM base AS docker
 COPY nginx/resolvers/docker.conf /usr/local/openresty/nginx/conf/resolver.conf
