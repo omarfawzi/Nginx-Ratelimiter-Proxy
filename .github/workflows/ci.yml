@@ -70,6 +70,9 @@ jobs:
       - name: Convert Repository Name to Lowercase
         run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
+      - name: Sanitize ref name for image tags
+        run: echo "REF_SLUG=$(echo ${{ github.ref_name }} | tr '/:' '-')" >> $GITHUB_ENV
+
       - name: Pull Test Docker Image
         run: docker pull ghcr.io/${{ env.REPO_NAME }}:test-${{ env.REF_SLUG }}
 
