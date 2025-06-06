@@ -32,6 +32,9 @@ jobs:
       - name: Convert Repository Name to Lowercase
         run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
+      - name: Sanitize ref name for image tags
+        run: echo "REF_SLUG=$(echo ${{ github.ref_name }} | tr '/:' '-')" >> $GITHUB_ENV
+
       - name: Build and Push Release Docker Image
         uses: docker/build-push-action@v5
         if: startsWith(github.ref, 'refs/tags/')
@@ -49,7 +52,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ env.REPO_NAME }}:test-${{ github.ref_name }}
+          tags: ghcr.io/${{ env.REPO_NAME }}:test-${{ env.REF_SLUG }}
           target: test
 
   test:
@@ -67,11 +70,14 @@ jobs:
       - name: Convert Repository Name to Lowercase
         run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
+      - name: Sanitize ref name for image tags
+        run: echo "REF_SLUG=$(echo ${{ github.ref_name }} | tr '/:' '-')" >> $GITHUB_ENV
+
       - name: Pull Test Docker Image
-        run: docker pull ghcr.io/${{ env.REPO_NAME }}:test-${{ github.ref_name }}
+        run: docker pull ghcr.io/${{ env.REPO_NAME }}:test-${{ env.REF_SLUG }}
 
       - name: Run Tests with Coverage
-        run: docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:test-${{ github.ref_name }} sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out"
+        run: docker run --rm -v ${{ github.workspace }}/coverage:/coverage ghcr.io/${{ env.REPO_NAME }}:test-${{ env.REF_SLUG }} sh -c "busted --coverage --pattern=_test /usr/local/openresty/nginx/lua && luacov && mv /usr/local/openresty/nginx/lua/luacov.report.out /coverage/coverage.out"
 
       - name: Upload Coverage Report as Artifact
         uses: actions/upload-artifact@v4
