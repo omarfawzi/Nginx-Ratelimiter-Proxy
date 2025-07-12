@@ -288,3 +288,71 @@ graph TD
     CheckLimit -->|Yes| ThrottleResponse["Return 429 Too Many Requests"]
     CheckLimit -->|No| AllowRequest
 ```
+
+
+## Operator Installation
+
+1. Build the operator image:
+
+```bash
+docker build -t ratelimiter-operator:latest -f operator.Dockerfile .
+```
+
+2. Apply the CRD and deploy the operator:
+
+```bash
+kubectl apply -f operator/config/crd.yaml
+kubectl apply -f operator/config/rbac.yaml
+kubectl apply -f operator/config/deployment.yaml
+```
+
+Create a `RateLimitSidecar` resource to inject the sidecar into matching pods:
+
+```yaml
+apiVersion: ratelimiter.codex/v1alpha1
+kind: RateLimitSidecar
+metadata:
+  name: example
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  env:
+    UPSTREAM_HOST: example.com
+    UPSTREAM_PORT: "80"
+    CACHE_PROVIDER: redis
+  rateLimits:
+    ignoredSegments:
+      users:
+        - admin
+      ips:
+        - 127.0.0.1
+      urls:
+        - /v1/ping
+    rules:
+      /v1:
+        users:
+          user2:
+            limit: 50
+            window: 60
+        ips:
+          192.168.1.1:
+            limit: 200
+            window: 60
+      ^/v2/[0-9]$:
+        users:
+          user3:
+            flowRate: 10
+            limit: 30
+            window: 60
+```
+
+### Local Development with Tilt
+
+Install [Tilt](https://tilt.dev) and start a local Kubernetes cluster such as kind or minikube. Then run:
+
+```bash
+tilt up
+```
+
+Tilt builds the operator image and applies the manifests in `operator/config` so you can iterate on the code locally.

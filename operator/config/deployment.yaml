@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ratelimiter-operator
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ratelimiter-operator
+  template:
+    metadata:
+      labels:
+        app: ratelimiter-operator
+    spec:
+      serviceAccountName: ratelimiter-operator
+      containers:
+      - name: manager
+        image: ratelimiter-operator:latest
+        imagePullPolicy: IfNotPresent
+        command:
+        - /manager
