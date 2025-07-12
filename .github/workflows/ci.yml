@@ -55,6 +55,15 @@ jobs:
           tags: ghcr.io/${{ env.REPO_NAME }}:test-${{ env.REF_SLUG }}
           target: test
 
+      - name: Build and Push Kube Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ghcr.io/${{ env.REPO_NAME }}:kube-${{ env.REF_SLUG }}
+          target: kube
+
   test:
     name: Run Tests
     needs: build
